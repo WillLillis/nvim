@@ -46,3 +46,8 @@ vim.keymap.set("n", "leader<j>", "<cmd>lprev<CR>zz")
 
 vim.keymap.set("n", "<leader>s", ":%s/\\<<C-r><C-w>\\>/<C-r><C-w>/gI<Left><Left>")
 vim.keymap.set("n", "<leader>x", "<cmd>!chmod + x %<CR>", { silent = true })
+
+-- Define a custom command ":W" that executes ":w"
+vim.cmd('command! -nargs=0 W w')
+-- Map the key sequence ":W" to the custom command
+vim.keymap.set('c', ':W', ':W<CR>', { noremap = true, silent = true })
