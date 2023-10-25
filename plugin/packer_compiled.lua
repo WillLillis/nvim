@@ -150,6 +150,11 @@ _G.packer_plugins = {
     path = "/home/lillis/.local/share/nvim/site/pack/packer/start/nvim-treesitter",
     url = "https://github.com/nvim-treesitter/nvim-treesitter"
   },
+  ["nvim-web-devicons"] = {
+    loaded = true,
+    path = "/home/lillis/.local/share/nvim/site/pack/packer/start/nvim-web-devicons",
+    url = "https://github.com/nvim-tree/nvim-web-devicons"
+  },
   ["packer.nvim"] = {
     loaded = true,
     path = "/home/lillis/.local/share/nvim/site/pack/packer/start/packer.nvim",
@@ -180,6 +185,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/lillis/.local/share/nvim/site/pack/packer/start/tree-sitter-asm",
     url = "https://github.com/rush-rs/tree-sitter-asm"
+  },
+  trouble = {
+    loaded = true,
+    path = "/home/lillis/.local/share/nvim/site/pack/packer/start/trouble",
+    url = "https://github.com/folke/trouble.nvim"
   },
   undotree = {
     loaded = true,
