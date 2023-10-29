@@ -39,6 +39,13 @@ return require('packer').startup(function(use)
       requres = { {'nvim-web-devicons'} },
   })
 
+  use({
+        'rust-lang/rust.vim',
+        config = function ()
+            vim.g.rustfmt_autosave = 1
+        end
+  })
+
   use('nvim-treesitter/nvim-treesitter', {run = ':TSUpdate'})
   use('nvim-treesitter/playground')
   use('theprimeagen/harpoon')
