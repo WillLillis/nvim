@@ -46,6 +46,18 @@ return require('packer').startup(function(use)
         end
   })
 
+  use({
+      'jose-elias-alvarez/null-ls.nvim',
+      as = 'null-ls',
+    opts = function ()
+        return ({
+            sources = {
+                null_ls.builtins.formatting.clang_format
+            },
+        })
+    end
+  })
+
   use('nvim-treesitter/nvim-treesitter', {run = ':TSUpdate'})
   use('nvim-treesitter/playground')
   use('theprimeagen/harpoon')
