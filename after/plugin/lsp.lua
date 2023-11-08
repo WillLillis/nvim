@@ -1,3 +1,7 @@
+require("neodev").setup({
+    -- Options go here, idk
+})
+
 local lsp = require("lsp-zero")
 
 lsp.preset("recommended")

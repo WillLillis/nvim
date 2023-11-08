@@ -135,10 +135,10 @@ _G.packer_plugins = {
     path = "/home/lillis/.local/share/nvim/site/pack/packer/start/mason.nvim",
     url = "https://github.com/williamboman/mason.nvim"
   },
-  ["null-ls"] = {
+  neodev = {
     loaded = true,
-    path = "/home/lillis/.local/share/nvim/site/pack/packer/start/null-ls",
-    url = "https://github.com/jose-elias-alvarez/null-ls.nvim"
+    path = "/home/lillis/.local/share/nvim/site/pack/packer/start/neodev",
+    url = "https://github.com/folke/neodev.nvim"
   },
   ["nvim-cmp"] = {
     loaded = true,

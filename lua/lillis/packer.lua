@@ -8,6 +8,11 @@ return require('packer').startup(function(use)
   use 'wbthomason/packer.nvim'
 
   use {
+      'folke/neodev.nvim',
+      as = 'neodev'
+  }
+
+  use {
 	  'nvim-telescope/telescope.nvim', tag = '0.1.1',
 	  -- or                            , branch = '0.1.x',
 	  requires = { {'nvim-lua/plenary.nvim'} }
@@ -44,18 +49,6 @@ return require('packer').startup(function(use)
         config = function ()
             vim.g.rustfmt_autosave = 1
         end
-  })
-
-  use({
-      'jose-elias-alvarez/null-ls.nvim',
-      as = 'null-ls',
-    opts = function ()
-        return ({
-            sources = {
-                null_ls.builtins.formatting.clang_format
-            },
-        })
-    end
   })
 
   use('nvim-treesitter/nvim-treesitter', {run = ':TSUpdate'})
