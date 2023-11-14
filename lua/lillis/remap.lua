@@ -20,7 +20,7 @@ end)
 -- Define the function to compile LaTeX
 local function compile_latex()
     local current_dir = vim.fn.expand('%:p:h') -- Get the current buffer's directory
-    local cmd = string.format("if pdflatex %s/main.tex ; then xpdf main.pdf & else fi", current_dir)
+    local cmd = string.format("if pdflatex %s/main.tex ; then xpdf main.pdf -title %s/main.tex & else fi", current_dir, current_dir)
     vim.fn.system(cmd)
 end
 -- latex compile
