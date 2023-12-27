@@ -7,6 +7,9 @@ return require('packer').startup(function(use)
     -- Packer can manage itself
     use 'wbthomason/packer.nvim'
 
+    -- Developing
+    use "~/plugins/lsploghover.nvim"
+
     -- Debugging
     use 'mfussenegger/nvim-dap'
 

@@ -125,6 +125,11 @@ _G.packer_plugins = {
     path = "/home/lillis/.local/share/nvim/site/pack/packer/start/lsp-zero.nvim",
     url = "https://github.com/VonHeikemen/lsp-zero.nvim"
   },
+  ["lsploghover.nvim"] = {
+    loaded = true,
+    path = "/home/lillis/.local/share/nvim/site/pack/packer/start/lsploghover.nvim",
+    url = "/home/lillis/plugins/lsploghover.nvim"
+  },
   ["mason-lspconfig.nvim"] = {
     loaded = true,
     path = "/home/lillis/.local/share/nvim/site/pack/packer/start/mason-lspconfig.nvim",
