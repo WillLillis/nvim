@@ -9,6 +9,7 @@ return require('packer').startup(function(use)
 
     -- Developing
     use "~/plugins/lsploghover.nvim"
+    --use "WillLillis/lsploghover.nvim"
 
     -- Debugging
     use 'mfussenegger/nvim-dap'
@@ -32,7 +33,13 @@ return require('packer').startup(function(use)
 
     use {
         'nvim-telescope/telescope.nvim',
-        requires = { { 'nvim-lua/plenary.nvim' } }
+        requires = { 'nvim-lua/plenary.nvim' }
+    }
+    use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
+    -- I wish I could get this to work... :(
+    use {
+        "nvim-telescope/telescope-file-browser.nvim",
+        requires = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
     }
     use({
         'rose-pine/neovim',
@@ -58,14 +65,11 @@ return require('packer').startup(function(use)
     use({
         'folke/trouble.nvim',
         as = 'trouble',
-        requres = { { 'nvim-web-devicons' } },
+        requres = { 'nvim-web-devicons' },
     })
 
     use({
         'rust-lang/rust.vim',
-        config = function()
-            vim.g.rustfmt_autosave = 1
-        end
     })
 
     use('nvim-treesitter/nvim-treesitter', { run = ':TSUpdate' })
@@ -75,6 +79,16 @@ return require('packer').startup(function(use)
     use('tpope/vim-fugitive')
     use('theprimeagen/vim-be-good')
     use('rush-rs/tree-sitter-asm')
+
+    use('hrsh7th/cmp_luasnip')
+    use({
+        "L3MON4D3/LuaSnip",
+        -- follow latest release.
+        tag = "v2.2", -- Replace <CurrentMajor> by the latest released major (first number of latest release)
+        -- install jsregexp (optional!:).
+        run = "make install_jsregexp"
+    })
+    use('rafamadriz/friendly-snippets')
 
     use {
         'VonHeikemen/lsp-zero.nvim',
