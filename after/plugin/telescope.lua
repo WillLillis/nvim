@@ -9,6 +9,11 @@ end)
 --local fb_actions = require "telescope._extensions.file_browser.actions"
 
 telescope.setup {
+    extensions = {
+        fzf = {},
+        file_browser = {},
+        nvim_web_devicons = {},
+    }
 }
 -- To get telescope-file-browser loaded and working with telescope,
 -- you need to call load_extension, somewhere after setup function:

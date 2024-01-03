@@ -6,7 +6,7 @@ local ls = require("luasnip")
 local types = require("luasnip.util.types")
 
 ls.config.set_config {
-    history = false,
+    history = true,
 
     updateevents = "TextChanged,TextChangedI",
 
@@ -24,30 +24,6 @@ ls.config.set_config {
 vim.keymap.set({ "i" }, "<C-K>", function() ls.expand() end, { silent = true })
 vim.keymap.set({ "i", "s" }, "<C-L>", function() ls.jump(1) end, { silent = true })
 vim.keymap.set({ "i", "s" }, "<C-J>", function() ls.jump(-1) end, { silent = true })
-
---vim.keymap.set({"i", "s"}, "<C-E>", function()
---	if ls.choice_active() then
---		ls.change_choice(1)
---	end
---end, {silent = true})
---
---vim.keymap.set({ "i", "s" }, "<c-k>", function()
---    if ls.expand_or_jumpable() then
---        ls.expand_or_jump()
---    end
---end, { silent = true })
---
---vim.keymap.set({ "i", "s" }, "<c-j>", function()
---    if ls.expand_or_jumpable(-1) then
---        ls.expand_or_jump(-1)
---    end
---end, { silent = true })
---
---vim.keymap.set("i", "<c-n>", function()
---    if ls.choice_active() then
---        ls.change_choice(1)
---    end
---end, { silent = true })
 
 -- For iterating
 vim.keymap.set("n", "<leader><leader>s", "<cmd>source ~/.config/nvim/after/plugin/luasnip.lua<Return>")
@@ -92,6 +68,8 @@ local c = ls.choice_node
 
 local d = ls.dynamic_node
 
+local rep = require("luasnip.extras").rep
+
 -- TODO: Document what I've learned about lambda
 local l = require("luasnip.extras").lambda
 
@@ -110,9 +88,10 @@ ls.add_snippets("all", {
 ls.add_snippets("xml", {
     snippet("<D",
         fmt(
-        "<Directive name=\"{}\" md_displaytext=\"{}\" url_fragment=\"{}\" md_description=\"{}\">\n</PseudoDirective>",
+        "<Directive name=\"{}\" md_displaytext=\".{}{}\" url_fragment=\"{}\" md_description=\"{}\">\n</Directive>",
             {
                 i(1, "Name"),
+                rep(1),
                 i(2, "Markdown Display Text"),
                 i(3, "URL Fragment"),
                 i(4, "Markdown Description"),

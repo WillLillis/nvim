@@ -38,11 +38,14 @@ lsp.on_attach(function(client, bufnr)
     vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, opts)
     vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts)
     vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end, opts)
-    vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, opts)
+    --vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, opts)
+    vim.keymap.set('n', '<leader>vrr', function() require('telescope.builtin').lsp_references() end, opts)
     vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, opts)
     vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
 end)
+
 require('mason').setup({})
+
 require('mason-lspconfig').setup({
     -- Replace the language servers listed here
     -- with the ones you want to install
@@ -56,4 +59,17 @@ require('mason-lspconfig').setup({
         lsp.default_setup,
     },
 })
+
+ require("lspconfig").groovyls.setup {
+    on_attach = lsp.on_attach,
+    filetypes = { "groovy" },
+    classpath = {
+        "/home/lillis/.local/share/nvim/mason/packages/groovy-language-server/build/libs",
+        "/home/lillis/.sdkman/candidates/groovy/current/lib",
+        "/home/lillis/.sdkman/candidates/groovy/current/src/subprojects/groovy-groovydoc/src/test/groovy/org/codehaus/groovy/tools/groovydoc/testfiles/alias/lib",
+        --"/path/where/the/files/are/located/lib",
+        --"/second/path/where/the/files/are/located/lib",
+    }
+}
+
 lsp.setup()
