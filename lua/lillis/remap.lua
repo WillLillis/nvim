@@ -66,7 +66,4 @@ vim.keymap.set('c', ':W', ':W<CR>', { noremap = true, silent = true })
 -- Remap to toggle on the Trouble plugin window
 vim.keymap.set("n", "<leader>tr", function() require("trouble").toggle() end)
 
--- Exit terminal mode with Esc
-vim.api.nvim_exec([[
-  autocmd TermOpen * tnoremap <Esc> <C-\><C-n>
-]], false)
+vim.keymap.set('t', '<esc>', "<C-\\><C-n>") -- esc to exit insert mode

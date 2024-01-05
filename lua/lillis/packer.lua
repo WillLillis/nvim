@@ -37,13 +37,11 @@ return require('packer').startup(function(use)
     }
 
     use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
-    -- I wish I could get this to work... :(
 
     use {
         "nvim-telescope/telescope-file-browser.nvim",
         requires = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
     }
-    use 'nvim-tree/nvim-web-devicons'
 
     use({
         'rose-pine/neovim',
@@ -71,6 +69,13 @@ return require('packer').startup(function(use)
         as = 'trouble',
         requres = { 'nvim-web-devicons' },
     })
+
+    use {
+        'numToStr/Comment.nvim',
+        config = function()
+            require('Comment').setup()
+        end
+    }
 
     use({
         'rust-lang/rust.vim',
