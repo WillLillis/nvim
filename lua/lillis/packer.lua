@@ -21,6 +21,8 @@ return require('packer').startup(function(use)
         as = 'neodev'
     }
 
+    use 'christoomey/vim-tmux-navigator'
+
     use {
         "folke/which-key.nvim",
         config = function()
@@ -43,13 +45,7 @@ return require('packer').startup(function(use)
         requires = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
     }
 
-    use({
-        'rose-pine/neovim',
-        as = 'rose-pine',
-        config = function()
-            vim.cmd('colorscheme rose-pine')
-        end
-    })
+    use { 'nvim-telescope/telescope-ui-select.nvim' }
 
     use({
         'rebelot/kanagawa.nvim',
@@ -63,6 +59,13 @@ return require('packer').startup(function(use)
         'nvim-tree/nvim-web-devicons',
         as = 'nvim-web-devicons',
     })
+
+    use {
+        'nvim-lualine/lualine.nvim',
+        requires = {
+            { 'nvim-tree/nvim-web-devicons', opt = true },
+        }
+    }
 
     use({
         'folke/trouble.nvim',
@@ -90,6 +93,8 @@ return require('packer').startup(function(use)
     use('rush-rs/tree-sitter-asm')
 
     use('rafamadriz/friendly-snippets')
+
+    use "b0o/schemastore.nvim"
 
     use {
         'VonHeikemen/lsp-zero.nvim',

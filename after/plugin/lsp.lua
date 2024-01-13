@@ -23,14 +23,10 @@ local cmp_mappings = lsp.defaults.cmp_mappings({
     ['<C-Space>'] = cmp.mapping.complete(),
 })
 
---lsp.set_preferences({
---   sign_icons = {}
---})
-
 lsp.on_attach(function(client, bufnr)
     local opts = { buffer = bufnr, remap = false }
 
-    vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
+    vim.keymap.set("n", "gd", function() require('telescope.builtin').lsp_definitions() end, opts)
     vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts)
     vim.keymap.set("n", "<leader>vws", function() vim.lsp.buf.workspace_symbol() end, opts)
     vim.keymap.set("n", "<leader>vs", function() vim.lsp.buf.document_symbol() end, opts)
@@ -38,7 +34,6 @@ lsp.on_attach(function(client, bufnr)
     vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, opts)
     vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts)
     vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end, opts)
-    --vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, opts)
     vim.keymap.set('n', '<leader>vrr', function() require('telescope.builtin').lsp_references() end, opts)
     vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, opts)
     vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
@@ -60,7 +55,7 @@ require('mason-lspconfig').setup({
     },
 })
 
- require("lspconfig").groovyls.setup {
+require("lspconfig").groovyls.setup {
     on_attach = lsp.on_attach,
     filetypes = { "groovy" },
     classpath = {
@@ -70,6 +65,15 @@ require('mason-lspconfig').setup({
         --"/path/where/the/files/are/located/lib",
         --"/second/path/where/the/files/are/located/lib",
     }
+}
+
+require('lspconfig').jsonls.setup {
+  settings = {
+    json = {
+      schemas = require('schemastore').json.schemas(),
+      validate = { enable = true },
+    },
+  },
 }
 
 lsp.setup()

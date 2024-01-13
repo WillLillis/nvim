@@ -31,6 +31,8 @@ vim.opt.updatetime = 50
 
 vim.opt.colorcolumn = "80"
 
+-- vim.opt.cmdheight = 0
+
 vim.g.mapleader = " "
 
 vim.opt.ve = { "onemore" }
