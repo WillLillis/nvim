@@ -58,22 +58,24 @@ require('mason-lspconfig').setup({
 require("lspconfig").groovyls.setup {
     on_attach = lsp.on_attach,
     filetypes = { "groovy" },
-    classpath = {
-        "/home/lillis/.local/share/nvim/mason/packages/groovy-language-server/build/libs",
-        "/home/lillis/.sdkman/candidates/groovy/current/lib",
-        "/home/lillis/.sdkman/candidates/groovy/current/src/subprojects/groovy-groovydoc/src/test/groovy/org/codehaus/groovy/tools/groovydoc/testfiles/alias/lib",
-        --"/path/where/the/files/are/located/lib",
-        --"/second/path/where/the/files/are/located/lib",
+    settings = {
+        groovy = {
+            classpath = {
+                -- Not sure if these are the correct...
+                "~/.local/share/nvim/mason/packages/groovy-language-server/build/libs",
+                "~/.sdkman/candidates/groovy/current/lib",
+            }
+        }
     }
 }
 
 require('lspconfig').jsonls.setup {
-  settings = {
-    json = {
-      schemas = require('schemastore').json.schemas(),
-      validate = { enable = true },
+    settings = {
+        json = {
+            schemas = require('schemastore').json.schemas(),
+            validate = { enable = true },
+        },
     },
-  },
 }
 
 lsp.setup()
