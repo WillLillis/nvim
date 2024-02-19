@@ -6,14 +6,6 @@ local lsp = require("lsp-zero")
 
 lsp.preset("recommended")
 
---lsp.ensure_installed({
---  'tsserver',
---  'eslint',
---  'lua_ls',
---  'rust_analyzer',
---  'clangd',
---})
-
 local cmp = require('cmp')
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
 local cmp_mappings = lsp.defaults.cmp_mappings({
@@ -42,12 +34,9 @@ end)
 require('mason').setup({})
 
 require('mason-lspconfig').setup({
-    -- Replace the language servers listed here
-    -- with the ones you want to install
     ensure_installed = {
         'tsserver',
         'rust_analyzer',
-        -- 'asm-lsp',
         'clangd',
     },
     handlers = {
@@ -55,13 +44,13 @@ require('mason-lspconfig').setup({
     },
 })
 
+-- Can't get this to work...
 require("lspconfig").groovyls.setup {
     on_attach = lsp.on_attach,
     filetypes = { "groovy" },
     settings = {
         groovy = {
             classpath = {
-                -- Not sure if these are the correct...
                 "~/.local/share/nvim/mason/packages/groovy-language-server/build/libs",
                 "~/.sdkman/candidates/groovy/current/lib",
             }
