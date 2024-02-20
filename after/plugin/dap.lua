@@ -3,7 +3,7 @@ local dap, dapui = require("dap"), require("dapui")
 dap.adapters.gdb = {
     type = 'executable',
     command = 'gdb',
-    args = {"-i", "dap" }
+    args = { "-i", "dap" }
 }
 
 dap.configurations.rust = {
@@ -11,7 +11,7 @@ dap.configurations.rust = {
         type = 'gdb',
         name = 'Debug',
         request = 'launch',
-        program = function ()
+        program = function()
             -- TODO: Try to auto detect cwd()/target/debug/<file-name>
             return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
         end,
@@ -21,11 +21,26 @@ dap.configurations.rust = {
         runInTerminal = false,
         preLaunchTask = {
             command = "cargo",
-            args = {"run"},
+            args = { "run" },
             type = "shell"
         }
     },
 }
+
+-- Make sure you compile with -g !!!!
+dap.configurations.c = {
+    {
+        name = "Launch",
+        type = "gdb",
+        request = "launch",
+        program = function()
+            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+        end,
+        cwd = "${workspaceFolder}",
+        stopAtBeginningOfMainSubprogram = false,
+    },
+}
+
 vim.keymap.set('n', '<F5>', function() dap.continue() end)
 vim.keymap.set('n', '<F6>', function() dap.step_over() end)
 vim.keymap.set('n', '<F7>', function() dap.step_into() end)
