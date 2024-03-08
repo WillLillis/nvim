@@ -76,13 +76,13 @@ local l = require("luasnip.extras").lambda
 local events = require "luasnip.util.events"
 
 local fmt = require("luasnip.extras.fmt").fmt
-ls.add_snippets("all", {
-    -- basic, don't need to know anything else
-    --    arg 1: string
-    --    arg 2: a node
-    snippet("simple", t "wow, you were right!"),
-
-})
+-- ls.add_snippets("all", {
+--     -- basic, don't need to know anything else
+--     --    arg 1: string
+--     --    arg 2: a node
+--     snippet("simple", t "wow, you were right!"),
+--
+-- })
 
 -- Snippet for writing an XML file for asm-lsp
 ls.add_snippets("xml", {

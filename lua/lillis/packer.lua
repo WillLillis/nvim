@@ -70,7 +70,7 @@ return require('packer').startup(function(use)
     use({
         'folke/trouble.nvim',
         as = 'trouble',
-        requres = { 'nvim-web-devicons' },
+        requires = { 'nvim-web-devicons' },
     })
 
     use {
@@ -80,9 +80,17 @@ return require('packer').startup(function(use)
         end
     }
 
-    use({
-        'rust-lang/rust.vim',
-    })
+    -- y u no worky
+    use {
+        'folke/todo-comments.nvim',
+        requires = { 'nvim-lua/plenary.nvim' },
+        opts = { signs = true },
+    }
+
+    -- Do I even use this?
+    -- use({
+    --     'rust-lang/rust.vim',
+    -- })
 
     use('nvim-treesitter/nvim-treesitter', { run = ':TSUpdate' })
     use('nvim-treesitter/playground')

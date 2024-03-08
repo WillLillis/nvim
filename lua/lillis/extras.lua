@@ -8,3 +8,12 @@ vim.api.nvim_create_autocmd('BufEnter', {
     -- group = group, -- Need to RTFM
     command = 'setlocal wrap'
 })
+
+-- Highlight when yanking text
+vim.api.nvim_create_autocmd('TextYankPost', {
+    desc = 'Highlight when yanking text',
+    group = vim.api.nvim_create_augroup('lillis-highlight-yank', { clear = true }),
+    callback = function ()
+        vim.highlight.on_yank()
+    end,
+})

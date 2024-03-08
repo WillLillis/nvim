@@ -44,6 +44,13 @@ vim.api.nvim_set_keymap(
     ":Telescope file_browser path=~/projects/<CR>",
     { noremap = true }
 )
+-- open a fuzzy finder for the current buffer
+vim.keymap.set('n', '<leader>/', function()
+    builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+        winblend = 10,
+        previewer = false,
+    })
+end, { desc = '[/] Fuzzy search in the current buffer' })
 -- To get telescope-file-browser loaded and working with telescope,
 -- you need to call load_extension, somewhere after setup function:
 telescope.load_extension('fzf')
