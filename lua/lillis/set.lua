@@ -36,3 +36,6 @@ vim.opt.colorcolumn = "80"
 vim.g.mapleader = " "
 
 vim.opt.ve = { "onemore" }
+
+-- Prevent zls from opening quick fix list on save
+vim.g.zig_fmt_parse_errors = 0

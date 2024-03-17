@@ -64,6 +64,12 @@ vim.cmd('command! -nargs=0 W w')
 vim.keymap.set('c', ':W', ':W<CR>', { noremap = true, silent = true })
 
 -- Remap to toggle on the Trouble plugin window
-vim.keymap.set("n", "<leader>tr", function() require("trouble").toggle() end)
+vim.keymap.set("n", "<leader>tr", function() require("trouble").toggle('workspace_diagnostics') end)
 
 vim.keymap.set('t', '<esc>', "<C-\\><C-n>") -- esc to exit insert mode
+
+-- Delete/Change inside and around pipes, useful for capture groups in Zig
+vim.keymap.set('n', 'di|', 'T|vt|d')
+vim.keymap.set('n', 'da|', 'T|hvt|ld')
+vim.keymap.set('n', 'ci|', 'T|vt|di')
+vim.keymap.set('n', 'ca|', 'T|hvt|ldi')
