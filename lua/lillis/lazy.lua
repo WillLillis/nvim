@@ -51,7 +51,8 @@ require("lazy").setup({
 
     {
         "rcarriga/nvim-dap-ui",
-        lazy = true
+        lazy = true,
+        dependencies = { "nvim-neotest/nvim-nio" }
     },
 
     {
@@ -186,20 +187,34 @@ require("lazy").setup({
             vim.api.nvim_create_autocmd('LspAttach', {
                 group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
                 callback = function(event)
-                    vim.keymap.set("n", "gd", function() require('telescope.builtin').lsp_definitions() end, {})
+                    vim.keymap.set("n", "gd", function() require('telescope.builtin').lsp_definitions() end,
+                        { desc = "gd Goto Definition" })
                     vim.keymap.set('n', "<leader>D", function() require('telescope.builtin').lsp_type_definitions() end,
-                        {})
-                    vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, {})
-                    vim.keymap.set("n", "<leader>vws", function() vim.lsp.buf.workspace_symbol() end, {})
-                    vim.keymap.set("n", "<leader>vs", function() vim.lsp.buf.document_symbol() end, {})
-                    vim.keymap.set("n", "<leader>vd", function() vim.diagnostic.open_float() end, {})
-                    vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, {})
-                    vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, {})
-                    vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end, {})
-                    vim.keymap.set('n', '<leader>vrr', function() require('telescope.builtin').lsp_references() end, {})
-                    vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, {})
-                    vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, {})
+                        { desc = "[D] goto type Definition" })
+                    vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end,
+                        { desc = "K hover support" })
+                    vim.keymap.set("n", "<leader>vws", function() vim.lsp.buf.workspace_symbol() end,
+                        { desc = "[vws] View Workspace Symbols" })
+                    vim.keymap.set("n", "<leader>vs", function() vim.lsp.buf.document_symbol() end,
+                        { desc = "[vd] View document Symbols" })
+                    vim.keymap.set("n", "<leader>vd", function() vim.diagnostic.open_float() end,
+                        { desc = "[vd] View Diagnostic" })
+                    vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end,
+                        { desc = "[d goto next Diagnostic" })
+                    vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end,
+                        { desc = "]d goto previous Diagnostic" })
+                    vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end,
+                        { desc = "[vca] View Code Actions" })
+                    vim.keymap.set('n', '<leader>vrr', function() require('telescope.builtin').lsp_references() end,
+                        { desc = "[vrr] View References" })
+                    vim.keymap.set("n", "<leader>rn", function() vim.lsp.buf.rename() end,
+                        { desc = "[rn] Rename symbol" })
+                    vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end,
+                        { desc = "<C-h> signature Help" })
+                    vim.keymap.set("n", "<leader>fr", function() vim.lsp.buf.format() end,
+                        { desc = "[fr] Format" })
 
+                    -- Not sure if I want this...but will leave it for now
                     -- The following two autocommands are used to highlight references of the
                     -- word under your cursor when your cursor rests there for a little while.
                     --    See `:help CursorHold` for information about when this is executed
