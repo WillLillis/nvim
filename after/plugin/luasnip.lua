@@ -26,7 +26,8 @@ vim.keymap.set({ "i", "s" }, "<C-L>", function() ls.jump(1) end, { silent = true
 vim.keymap.set({ "i", "s" }, "<C-J>", function() ls.jump(-1) end, { silent = true })
 
 -- For iterating
-vim.keymap.set("n", "<leader><leader>s", "<cmd>source ~/.config/nvim/after/plugin/luasnip.lua<Return>")
+vim.keymap.set("n", "<leader><leader>s", "<cmd>source ~/.config/nvim/after/plugin/luasnip.lua<Return>",
+    { desc = "[[s]] Source luasnip.lua file" })
 
 -- create snippet
 -- s(context, nodes, condition, ...)
@@ -88,7 +89,7 @@ local fmt = require("luasnip.extras.fmt").fmt
 ls.add_snippets("xml", {
     snippet("<D",
         fmt(
-        "<Directive name=\"{}\" md_displaytext=\".{}{}\" url_fragment=\"{}\" md_description=\"{}\">\n</Directive>",
+            "<Directive name=\"{}\" md_displaytext=\".{}{}\" url_fragment=\"{}\" md_description=\"{}\">\n</Directive>",
             {
                 i(1, "Name"),
                 rep(1),
