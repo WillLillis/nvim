@@ -5,6 +5,55 @@ dap.adapters.gdb = {
     command = 'gdb',
     args = { "-i", "dap" }
 }
+-- Move over utils file?
+--- Returns the time a file was last modified, or nil if it doesn't exist
+--- @param path string
+--- @return integer|nil
+local function get_modified_timestamp(path)
+    local f = io.popen(string.format("stat -c %%Y %s", path))
+    if not f then
+        return nil
+    end
+
+    local last_modified = f:read()
+    if not last_modified then
+        return nil
+    else
+        vim.lsp.util.open_floating_preview({ "test" }, "", {})
+        return tonumber(last_modified)
+    end
+end
+
+local function get_rust_bin()
+    local project_dirs = vim.lsp.buf.list_workspace_folders()
+    if not project_dirs or #project_dirs == 0 or not project_dirs[1] then
+        return nil
+    end
+    local project_dir = project_dirs[1]
+
+    local name_start = string.len(project_dir) - (string.find(string.reverse(project_dir), '/') - 2)
+    local bin_name = string.sub(project_dir, name_start)
+    local bin_path = project_dir .. "/target/debug/" .. bin_name
+
+    local bin_last_modified = get_modified_timestamp(bin_path)
+    if bin_last_modified == nil then
+        return nil
+    else
+        local buf_path = vim.api.nvim_buf_get_name(0)
+        local buf_last_modified = get_modified_timestamp(buf_path)
+        if buf_last_modified == nil then
+            return nil
+        end
+
+        if buf_last_modified > bin_last_modified then
+            -- Better way to do this?
+            vim.lsp.util.open_floating_preview({ "# WARNING\nCurrent buffer modified since project was built" },
+                "markdown", {})
+        end
+
+        return bin_path
+    end
+end
 
 dap.configurations.rust = {
     {
@@ -12,8 +61,12 @@ dap.configurations.rust = {
         name = 'Debug',
         request = 'launch',
         program = function()
-            -- TODO: Try to auto detect cwd()/target/debug/<file-name>
-            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+            local bin_path = get_rust_bin()
+            if bin_path == nil then
+                return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+            else
+                return bin_path
+            end
         end,
         cwd = vim.fn.getcwd(),
         stopOnEntry = false,
@@ -47,11 +100,11 @@ vim.keymap.set('n', '<F6>', function() dap.step_over() end)
 vim.keymap.set('n', '<F7>', function() dap.step_into() end)
 vim.keymap.set('n', '<F8>', function() dap.step_out() end)
 vim.keymap.set('n', '<Leader>b', function() dap.toggle_breakpoint() end, { desc = "[b] toggle Breakpoint" })
-vim.keymap.set('n', '<Leader>B', function() dap.set_breakpoint() end, { desc = "[B] set Breakpoint"} )
+vim.keymap.set('n', '<Leader>B', function() dap.set_breakpoint() end, { desc = "[B] set Breakpoint" })
 vim.keymap.set('n', '<Leader>lp',
-    function() dap.set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end, { desc = "[lp] Log Point message" } )
-vim.keymap.set('n', '<Leader>dr', function() dap.repl.open() end, { desc = "[dr] open REPL" } )
-vim.keymap.set('n', '<Leader>dl', function() dap.run_last() end, { desc = "[dl] run Last" } )
+    function() dap.set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end, { desc = "[lp] Log Point message" })
+vim.keymap.set('n', '<Leader>dr', function() dap.repl.open() end, { desc = "[dr] open REPL" })
+vim.keymap.set('n', '<Leader>dl', function() dap.run_last() end, { desc = "[dl] run Last" })
 vim.keymap.set({ 'n', 'v' }, '<Leader>dh', function()
     require('dap.ui.widgets').hover()
 end)
