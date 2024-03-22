@@ -94,10 +94,9 @@ dap.configurations.c = {
     },
 }
 
--- TODO: Rethink these...
 vim.keymap.set('n', '<F5>', function() dap.continue() end)
-vim.keymap.set('n', '<F6>', function() dap.step_over() end)
-vim.keymap.set('n', '<F7>', function() dap.step_into() end)
+vim.keymap.set('n', '<F6>', function() dap.step_into() end)
+vim.keymap.set('n', '<F7>', function() dap.step_over() end)
 vim.keymap.set('n', '<F8>', function() dap.step_out() end)
 vim.keymap.set('n', '<Leader>b', function() dap.toggle_breakpoint() end, { desc = "[b] toggle Breakpoint" })
 vim.keymap.set('n', '<Leader>B', function() dap.set_breakpoint() end, { desc = "[B] set Breakpoint" })
