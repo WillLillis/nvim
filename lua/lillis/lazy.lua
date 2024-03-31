@@ -220,18 +220,18 @@ require("lazy").setup({
                     --    See `:help CursorHold` for information about when this is executed
                     --
                     -- When you move your cursor, the highlights will be cleared (the second autocommand).
-                    -- local client = vim.lsp.get_client_by_id(event.data.client_id)
-                    -- if client and client.server_capabilities.documentHighlightProvider then
-                    --     vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-                    --         buffer = event.buf,
-                    --         callback = vim.lsp.buf.document_highlight,
-                    --     })
-                    --
-                    --     vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-                    --         buffer = event.buf,
-                    --         callback = vim.lsp.buf.clear_references,
-                    --     })
-                    -- end
+                    local client = vim.lsp.get_client_by_id(event.data.client_id)
+                    if client and client.server_capabilities.documentHighlightProvider then
+                        vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+                            buffer = event.buf,
+                            callback = vim.lsp.buf.document_highlight,
+                        })
+
+                        vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+                            buffer = event.buf,
+                            callback = vim.lsp.buf.clear_references,
+                        })
+                    end
                 end,
             })
 
@@ -420,7 +420,8 @@ require("lazy").setup({
                             luasnip.expand_or_jump()
                         end
                     end, { 'i', 's' }),
-                    ['<C-h>'] = cmp.mapping(function()
+                    --['<C-h>'] = cmp.mapping(function()
+                    ['<C-k>'] = cmp.mapping(function()
                         if luasnip.locally_jumpable(-1) then
                             luasnip.jump(-1)
                         end
@@ -437,29 +438,4 @@ require("lazy").setup({
             }
         end,
     },
-
-    -- Somehow I broke autocomplete switching from packer to lazy
-    -- Here's the old setup...
-    -- {
-    --     "VonHeikemen/lsp-zero.nvim",
-    --     dependencies = {
-    --         -- LSP Support
-    --         { "neovim/nvim-lspconfig" },
-    --         { "williamboman/mason.nvim" },
-    --         { "williamboman/mason-lspconfig.nvim" },
-    --
-    --         -- Autocompletion
-    --         { "hrsh7th/nvim-cmp" },
-    --         { "hrsh7th/cmp-buffer" },
-    --         { "hrsh7th/cmp-path" },
-    --         { "saadparwaiz1/cmp_luasnip" },
-    --         { "hrsh7th/cmp-nvim-lsp" },
-    --         { "hrsh7th/cmp-nvim-lua" },
-    --
-    --         -- Snippets
-    --         { "L3MON4D3/LuaSnip" },
-    --         { "rafamadriz/friendly-snippets" },
-    --     },
-    --     lazy = true
-    -- }
 })
