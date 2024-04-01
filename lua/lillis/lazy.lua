@@ -150,16 +150,6 @@ require("lazy").setup({
     },
 
     {
-        "rush-rs/tree-sitter-asm",
-        lazy = true
-    },
-
-    {
-        "rafamadriz/friendly-snippets",
-        lazy = true
-    },
-
-    {
         "b0o/schemastore.nvim",
         lazy = true
     },

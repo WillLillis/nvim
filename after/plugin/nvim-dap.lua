@@ -6,10 +6,12 @@ dap.adapters.gdb = {
     args = { "-i", "dap" }
 }
 -- Move over utils file?
---- Returns the time a file was last modified, or nil if it doesn't exist
+
+--- Returns the time a file was last modified, or nil if something went wrong
 --- @param path string
 --- @return integer|nil
 local function get_modified_timestamp(path)
+    -- TODO: See if there's an analogous command to use on Windows
     local f = io.popen(string.format("stat -c %%Y %s", path))
     if not f then
         return nil
@@ -19,11 +21,14 @@ local function get_modified_timestamp(path)
     if not last_modified then
         return nil
     else
-        vim.lsp.util.open_floating_preview({ "test" }, "", {})
         return tonumber(last_modified)
     end
 end
 
+--- Returns the path to the debug build of the current rust project, if possible
+--- Opens a floating window warning the user if the current buffer was modifed
+--- after the last build
+--- @return string|nil
 local function get_rust_bin()
     local project_dirs = vim.lsp.buf.list_workspace_folders()
     if not project_dirs or #project_dirs == 0 or not project_dirs[1] then
@@ -47,7 +52,7 @@ local function get_rust_bin()
 
         if buf_last_modified > bin_last_modified then
             -- Better way to do this?
-            vim.lsp.util.open_floating_preview({ "# WARNING\nCurrent buffer modified since project was built" },
+            vim.lsp.util.open_floating_preview({ "# WARNING\nCurrent buffer modified since last build" },
                 "markdown", {})
         end
 
