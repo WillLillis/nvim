@@ -36,6 +36,9 @@ vim.keymap.set('n', '<leader>fc', ":Telescope file_browser path=%:p:h select_buf
 vim.keymap.set('n', '<leader>fp', ":Telescope file_browser path=~/projects/<CR>",
     { desc = "[fp] File browser in ~/projects" })
 
+vim.keymap.set('n', '<leader>ff', ":Telescope find_files<CR>",
+    { desc = "[ff] Find files in current working directory" })
+
 vim.keymap.set('n', '<leader>/', function()
     builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
         winblend = 10,
