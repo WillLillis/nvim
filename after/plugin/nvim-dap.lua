@@ -1,5 +1,6 @@
 local dap, dapui = require("dap"), require("dapui")
 
+
 dap.adapters.gdb = {
     type = 'executable',
     command = 'gdb',
@@ -123,7 +124,10 @@ vim.keymap.set('n', '<Leader>ds', function()
     local widgets = require('dap.ui.widgets')
     widgets.centered_float(widgets.scopes)
 end)
-
+-- Eval var under cursor
+vim.keymap.set('n', '<Leader>?', function()
+    require('dapui').eval(nil, { enter = true }) -- false positive from lsp about required fields here?
+end)
 -- Dap UI hooks
 
 dap.listeners.after.event_initialized["dapui_config"] = function()
@@ -140,3 +144,4 @@ end
 
 require("dap")
 require("dapui").setup()
+require("nvim-dap-virtual-text").setup({})
