@@ -161,6 +161,11 @@ require("lazy").setup({
         lazy = true
     },
 
+    -- {
+    --     "nvimdev/lspsaga.nvim",
+    --     lazy = true
+    -- },
+
     { -- LSP Configuration & Plugins
         'neovim/nvim-lspconfig',
         dependencies = {
@@ -168,6 +173,16 @@ require("lazy").setup({
             'williamboman/mason.nvim',
             'williamboman/mason-lspconfig.nvim',
             'WhoIsSethDaniel/mason-tool-installer.nvim',
+            {
+                'nvimdev/lspsaga.nvim',
+                opts = {
+                    lightbulb = { enable = false }
+                },
+                dependencies = {
+                    'nvim-treesitter/nvim-treesitter',
+                    'nvim-tree/nvim-web-devicons',
+                }
+            },
 
             -- Useful status updates for LSP.
             { 'j-hui/fidget.nvim', opts = {} },
@@ -204,14 +219,20 @@ require("lazy").setup({
                         { desc = "[vca] View Code Actions" })
                     vim.keymap.set('n', '<leader>vrr', function() require('telescope.builtin').lsp_references() end,
                         { desc = "[vrr] View References" })
-                    vim.keymap.set("n", "<leader>rn", function() vim.lsp.buf.rename() end,
-                        { desc = "[rn] Rename symbol" })
+                    -- vim.keymap.set("n", "<leader>rn", function() vim.lsp.buf.rename() end,
+                    vim.keymap.set("n", "<leader>rn",
+                        function()
+                            vim.api.nvim_command([[:Lspsaga rename]])
+                            local keys = vim.api.nvim_replace_termcodes('<ESC>A', true, false, true)
+                            vim.api.nvim_feedkeys(keys, 'm', false)
+                        end, { silent = true, desc = "[rn] Rename symbol" })
+                    -- vim.keymap.set("n", "<leader>rn", function() require('lspsaga').lua.lspsaga.rename.new() end,
+                    -- { desc = "[rn] Rename symbol" })
                     vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end,
                         { desc = "<C-h> signature Help" })
                     vim.keymap.set("n", "<leader>fr", function() vim.lsp.buf.format() end,
                         { desc = "[fr] Format" })
 
-                    -- Not sure if I want this...but will leave it for now
                     -- The following two autocommands are used to highlight references of the
                     -- word under your cursor when your cursor rests there for a little while.
                     --    See `:help CursorHold` for information about when this is executed
@@ -253,9 +274,10 @@ require("lazy").setup({
                 gopls = {},
                 pyright = {},
                 rust_analyzer = {},
-
+                -- Don't think these settings are correct...
                 jsonls = {
                     settings = {
+                        capabilities = capabilities,
                         json = {
                             schemas = require('schemastore').json.schemas(),
                             validate = { enable = true },
@@ -298,6 +320,12 @@ require("lazy").setup({
             --
             --  You can press `g?` for help in this menu
             require('mason').setup()
+
+            -- Better place for this?
+            vim.api.nvim_create_autocmd("FileType", {
+                pattern = "sagarename",
+                command = "nnoremap <buffer><silent> <ESC> <cmd>close!<CR>",
+            })
 
             -- You can add other tools here that you want Mason to install
             -- for you, so that they are available from within Neovim.

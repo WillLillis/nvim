@@ -37,5 +37,7 @@ vim.g.mapleader = " "
 
 vim.opt.ve = { "onemore" }
 
--- Prevent zls from opening quick fix list on save
-vim.g.zig_fmt_parse_errors = 0
+-- Prevent zls from opening quick fix list on save (not needed anymore?)
+-- vim.g.zig_fmt_parse_errors = 0 
+-- Prevent zls from formatting on save
+vim.g.zig_fmt_autosave = 0

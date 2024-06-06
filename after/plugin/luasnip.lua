@@ -99,3 +99,13 @@ ls.add_snippets("xml", {
             })
     ),
 })
+
+ls.add_snippets("all", {
+    snippet("lsp",
+        fmt(
+            "LSPLOGHOVER<{}>",
+            {
+                i(1, "Log"),
+            })
+    ),
+})
