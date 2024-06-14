@@ -100,6 +100,21 @@ dap.configurations.c = {
     },
 }
 
+-- TODO: Better executable file detection, as in what I did with rust
+dap.configurations.zig = {
+    {
+        name = 'Launch',
+        type = 'gdb',
+        request = 'launch',
+        program = function()
+            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+        end,
+        cwd = '${workspaceFolder}',
+        stopOnEntry = false,
+        args = { "build-exe", "/home/lillis/projects/test_zig/src/main.zig" },
+    },
+}
+
 vim.keymap.set('n', '<F5>', function() dap.continue() end)
 vim.keymap.set('n', '<F6>', function() dap.step_into() end)
 vim.keymap.set('n', '<F7>', function() dap.step_over() end)
