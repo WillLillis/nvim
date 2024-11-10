@@ -83,10 +83,28 @@ require("lazy").setup({
     },
 
     {
+        "OXY2DEV/markview.nvim",
+        lazy = false, -- Recommended
+        -- ft = "markdown" -- If you decide to lazy-load anyway
+        vim.keymap.set("n", "<leader>tm", function() vim.cmd("Markview toggle") end,
+            { desc = "[tm] Toggle markdown view" }),
+
+        dependencies = {
+            -- You will not need this if you installed the
+            -- parsers manually
+            -- Or if the parsers are in your $RUNTIMEPATH
+            "nvim-treesitter/nvim-treesitter",
+
+            "nvim-tree/nvim-web-devicons"
+        }
+    },
+
+    {
         "nvim-telescope/telescope.nvim",
         dependencies = {
             { "nvim-lua/plenary.nvim" },
-            { "nvim-telescope/telescope-fzf-native.nvim", build = "make" }
+            { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+            { "debugloop/telescope-undo.nvim" },
         },
         lazy = true
     },
@@ -103,6 +121,11 @@ require("lazy").setup({
     },
 
     {
+        "debugloop/telescope-undo.nvim",
+        lazy = false
+    },
+
+    {
         "nvim-tree/nvim-web-devicons",
         name = "devicons",
     },
@@ -115,6 +138,15 @@ require("lazy").setup({
         lazy = true
     },
 
+    -- Wildmenu stuff
+    { 'gelguy/wilder.nvim', opts = {}, lazy = false, },
+
+    -- {
+    --     "m4xshen/hardtime.nvim",
+    --     dependencies = { "MunifTanjim/nui.nvim", "nvim-lua/plenary.nvim" },afplll
+    --     opts = {},
+    -- },
+    --
     {
         "folke/trouble.nvim",
         name = "trouble",
@@ -134,6 +166,11 @@ require("lazy").setup({
         dependencies = { "nvim-lua/plenary.nvim" },
         opts = { signs = true },
         lazy = true
+    },
+
+    {
+        "lewis6991/gitsigns.nvim",
+        lazy = true,
     },
 
     {
@@ -160,6 +197,12 @@ require("lazy").setup({
         "b0o/schemastore.nvim",
         lazy = true
     },
+
+    -- {
+    --     "mrcjkb/rustaceanvim",
+    --     version = '^5', -- Recommended
+    --     lazy = false, -- This plugin is already lazy
+    -- },
 
     -- {
     --     "nvimdev/lspsaga.nvim",
@@ -273,7 +316,51 @@ require("lazy").setup({
                 clangd = {},
                 gopls = {},
                 pyright = {},
-                rust_analyzer = {},
+                rust_analyzer = {
+                    -- settings won't apply????
+                    settings = {
+                        ['rust-analyzer'] = {
+                            cargo = {
+                                allFeatures = true,
+                                loadOutDirsFromCheck = true,
+                                runBuildScripts = true,
+                                nightly = true,
+                            },
+                            -- Add clippy lints for Rust.
+                            checkOnSave = {
+                                allFeatures = true,
+                                command = "clippy",
+                                extraArgs = {
+                                    "--",
+                                    "--no-deps",
+                                    "-Dclippy::correctness",
+                                    "-Dclippy::complexity",
+                                    "-Wclippy::perf",
+                                    "-Wclippy::pedantic",
+                                    -- These are really annoying
+                                    "-Aclippy::too_many_lines",
+                                    "-Aclippy::similar_names",
+                                    "-Aclippy::implicit_hasher",
+                                    "-Aclippy::module_name_repetitions",
+                                    "-Aclippy::cast_possible_truncation",
+                                    -- This is a common false positive
+                                    "-Aclippy::items_after_statements",
+                                },
+                            }, -- check  = {
+                            --     command = "+nightly clippy --all-targets",
+                            -- },
+                        },
+                        -- checkOnSave = {
+                        --     command = "clippy",
+                        -- },
+                        -- inlay_hints = {
+                        --     auto = true,
+                        --     show_parameter_hints = false,
+                        --     parameter_hints_prefix = "",
+                        --     other_hints_prefix = "",
+                        -- },
+                    }
+                },
                 -- Don't think these settings are correct...
                 jsonls = {
                     settings = {

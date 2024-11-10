@@ -75,7 +75,7 @@ dap.configurations.rust = {
             end
         end,
         cwd = vim.fn.getcwd(),
-        stopOnEntry = false,
+        -- stopOnEntry = false,
         args = {},
         runInTerminal = false,
         preLaunchTask = {

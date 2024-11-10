@@ -24,6 +24,7 @@ telescope.setup {
             hidden = { file_browser = true, folder_browser = true },
         },
         nvim_web_devicons = {},
+        undo = {},
     },
 }
 
@@ -45,8 +46,12 @@ vim.keymap.set('n', '<leader>/', function()
         previewer = false,
     })
 end, { desc = '[/] Fuzzy search in the current buffer' })
+
+vim.keymap.set('n', '<leader>U', ":Telescope undo<CR>",
+    { desc = '[u] Browse undo tree' })
 -- To get telescope-file-browser loaded and working with telescope,
 -- you need to call load_extension, somewhere after setup function:
 telescope.load_extension('fzf')
 telescope.load_extension "file_browser"
 telescope.load_extension("ui-select")
+telescope.load_extension("undo")

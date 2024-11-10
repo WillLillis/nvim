@@ -41,3 +41,5 @@ vim.opt.ve = { "onemore" }
 -- vim.g.zig_fmt_parse_errors = 0 
 -- Prevent zls from formatting on save
 vim.g.zig_fmt_autosave = 0
+vim.api.nvim_set_hl(0, '@lsp.type.string.zig', {})
+vim.env.RUSTFLAGS = "--cfg=clippy" -- Does nothing?
