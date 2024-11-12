@@ -30,8 +30,8 @@ require("lazy").setup({
                 },
             })
             -- vim.cmd("colorscheme kanagawa-dragon") -- Darker but worse contrast
-            -- vim.cmd("colorscheme kanagawa-wave")
-            vim.cmd("colorscheme kanagawa")
+            vim.cmd("colorscheme kanagawa-wave")
+            -- vim.cmd("colorscheme kanagawa")
         end,
     },
 
@@ -70,6 +70,14 @@ require("lazy").setup({
 
     {
         "christoomey/vim-tmux-navigator"
+    },
+
+    {
+        "yorickpeterse/nvim-window",
+        keys = {
+            { "<leader>w", "<cmd>lua require('nvim-window').pick()<CR>", desc = "nvim-window: Jump to window" },
+        },
+        lazy = true,
     },
 
     {
@@ -151,7 +159,7 @@ require("lazy").setup({
         "folke/trouble.nvim",
         name = "trouble",
         dependencies = { "nvim-web-devicons" },
-        lazy = true
+        lazy = false
     },
 
     {

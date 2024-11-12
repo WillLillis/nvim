@@ -48,16 +48,19 @@ vim.keymap.set("n", "leader<k>", "<cmd>lnext<CR>zz")
 vim.keymap.set("n", "leader<j>", "<cmd>lprev<CR>zz")
 
 vim.keymap.set("n", "<leader>s", ":%s/\\<<C-r><C-w>\\>/<C-r><C-w>/gI<Left><Left>")
-vim.keymap.set("n", "<leader>x", "<cmd>!chmod + x %<CR>", { silent = true })
+-- vim.keymap.set("n", "<leader>x", "<cmd>!chmod + x %<CR>", { silent = true })
 
--- Define a custom command ":W" that executes ":w"
+-- Define a custom command ":W" that executes":w"
 vim.cmd('command! -nargs=0 W w')
 -- Map the key sequence ":W" to the custom command
 vim.keymap.set('c', ':W', ':W<CR>', { noremap = true, silent = true })
 
 -- Remap to toggle on the Trouble plugin window
-vim.keymap.set("n", "<leader>tr", function() require("trouble").toggle('workspace_diagnostics') end,
+vim.keymap.set("n", "<leader>tr", "<cmd>Trouble diagnostics toggle focus=true<CR>",
     { desc = "[tr] Trouble" })
+vim.keymap.set("n", "<leader>tt", "<cmd>Trouble diagnostics toggle filter.buf=0 focus=true<CR>",
+    { desc = "[tr] Trouble" })
+
 
 vim.keymap.set('t', '<esc>', "<C-\\><C-n>") -- esc to exit insert mode
 
