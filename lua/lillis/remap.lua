@@ -58,7 +58,7 @@ vim.keymap.set('c', ':W', ':W<CR>', { noremap = true, silent = true })
 -- Remap to toggle on the Trouble plugin window
 vim.keymap.set("n", "<leader>tr", "<cmd>Trouble diagnostics toggle focus=true<CR>",
     { desc = "[tr] Trouble" })
-vim.keymap.set("n", "<leader>tt", "<cmd>Trouble diagnostics toggle filter.buf=0 focus=true<CR>",
+vim.keymap.set("n", "<leader>tc", "<cmd>Trouble diagnostics toggle filter.buf=0 focus=true<CR>",
     { desc = "[tr] Trouble" })
 
 

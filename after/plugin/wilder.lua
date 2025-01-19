@@ -46,4 +46,5 @@ wilder.set_option('renderer', wilder.popupmenu_renderer({
     }),
     left = { ' ', wilder.popupmenu_devicons() },
     right = { ' ', wilder.popupmenu_scrollbar() },
+    max_height = 15,
 }))

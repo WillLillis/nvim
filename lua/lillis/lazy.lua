@@ -57,15 +57,69 @@ require("lazy").setup({
     },
 
     {
-        "rcarriga/nvim-dap-ui",
-        lazy = true,
-        dependencies = { "nvim-neotest/nvim-nio" }
+        "folke/noice.nvim",
+        event = "VeryLazy",
+        opts = {
+            -- add any options here
+        },
+        dependencies = {
+            -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+            "MunifTanjim/nui.nvim",
+            -- OPTIONAL:
+            --   `nvim-notify` is only needed, if you want to use the notification view.
+            --   If not available, we use `mini` as the fallback
+            "rcarriga/nvim-notify",
+        },
+        setup = {
+            lsp = {
+                -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+                override = {
+                    ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+                    ["vim.lsp.util.stylize_markdown"] = true,
+                    ["cmp.entry.get_documentation"] = true, -- requires hrsh7th/nvim-cmp
+                },
+            },
+            -- you can enable a preset for easier configuration
+            presets = {
+                bottom_search = true, -- use a classic bottom cmdline for search
+                command_palette = true, -- position the cmdline and popupmenu together
+                long_message_to_split = true, -- long messages will be sent to a split
+                inc_rename = false, -- enables an input dialog for inc-rename.nvim
+                lsp_doc_border = false, -- add a border to hover docs and signature help
+            },
+        }
     },
 
     {
-        "folke/neodev.nvim",
-        name = "neodev",
-        lazy = true
+        "kdheepak/lazygit.nvim",
+        lazy = true,
+        cmd = {
+            "LazyGit",
+            "LazyGitConfig",
+            "LazyGitCurrentFile",
+            "LazyGitFilter",
+            "LazyGitFilterCurrentFile",
+        },
+        -- optional for floating window border decoration
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            "nvim-telescope/telescope.nvim",
+        },
+        -- setting the keybinding for LazyGit with 'keys' is recommended in
+        -- order to load the plugin when the command is run for the first time
+        keys = {
+            { "<leader>lg", "<cmd>LazyGit<cr>", desc = "LazyGit" }
+        },
+
+        config = function()
+            require("telescope").load_extension("lazygit")
+        end,
+    },
+
+    {
+        "rcarriga/nvim-dap-ui",
+        lazy = true,
+        dependencies = { "nvim-neotest/nvim-nio" }
     },
 
     {
@@ -157,8 +211,10 @@ require("lazy").setup({
     --
     {
         "folke/trouble.nvim",
-        name = "trouble",
         dependencies = { "nvim-web-devicons" },
+        config = function()
+            require("trouble").setup()
+        end,
         lazy = false
     },
 
@@ -183,7 +239,8 @@ require("lazy").setup({
 
     {
         "nvim-treesitter/nvim-treesitter",
-        lazy = true
+        build = ":TSUpdate",
+        lazy = true,
     },
 
     {
@@ -206,16 +263,11 @@ require("lazy").setup({
         lazy = true
     },
 
-    -- {
-    --     "mrcjkb/rustaceanvim",
-    --     version = '^5', -- Recommended
-    --     lazy = false, -- This plugin is already lazy
-    -- },
-
-    -- {
-    --     "nvimdev/lspsaga.nvim",
-    --     lazy = true
-    -- },
+    {
+        "mrcjkb/rustaceanvim",
+        version = '^5', -- Recommended
+        lazy = false,   -- This plugin is already lazy
+    },
 
     { -- LSP Configuration & Plugins
         'neovim/nvim-lspconfig',
@@ -224,6 +276,17 @@ require("lazy").setup({
             'williamboman/mason.nvim',
             'williamboman/mason-lspconfig.nvim',
             'WhoIsSethDaniel/mason-tool-installer.nvim',
+            {
+                "folke/lazydev.nvim",
+                ft = "lua", -- only load on lua files
+                opts = {
+                    library = {
+                        -- See the configuration section for more details
+                        -- Load luvit types when the `vim.uv` word is found
+                        { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+                    },
+                },
+            },
             {
                 'nvimdev/lspsaga.nvim',
                 opts = {
@@ -237,10 +300,6 @@ require("lazy").setup({
 
             -- Useful status updates for LSP.
             { 'j-hui/fidget.nvim', opts = {} },
-
-            -- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
-            -- used for completion, annotations and signatures of Neovim apis
-            { 'folke/neodev.nvim', opts = {} },
         },
         config = function()
             --  This function gets run when an LSP attaches to a particular buffer.
@@ -324,51 +383,9 @@ require("lazy").setup({
                 clangd = {},
                 gopls = {},
                 pyright = {},
-                rust_analyzer = {
-                    -- settings won't apply????
-                    settings = {
-                        ['rust-analyzer'] = {
-                            cargo = {
-                                allFeatures = true,
-                                loadOutDirsFromCheck = true,
-                                runBuildScripts = true,
-                                nightly = true,
-                            },
-                            -- Add clippy lints for Rust.
-                            checkOnSave = {
-                                allFeatures = true,
-                                command = "clippy",
-                                extraArgs = {
-                                    "--",
-                                    "--no-deps",
-                                    "-Dclippy::correctness",
-                                    "-Dclippy::complexity",
-                                    "-Wclippy::perf",
-                                    "-Wclippy::pedantic",
-                                    -- These are really annoying
-                                    "-Aclippy::too_many_lines",
-                                    "-Aclippy::similar_names",
-                                    "-Aclippy::implicit_hasher",
-                                    "-Aclippy::module_name_repetitions",
-                                    "-Aclippy::cast_possible_truncation",
-                                    -- This is a common false positive
-                                    "-Aclippy::items_after_statements",
-                                },
-                            }, -- check  = {
-                            --     command = "+nightly clippy --all-targets",
-                            -- },
-                        },
-                        -- checkOnSave = {
-                        --     command = "clippy",
-                        -- },
-                        -- inlay_hints = {
-                        --     auto = true,
-                        --     show_parameter_hints = false,
-                        --     parameter_hints_prefix = "",
-                        --     other_hints_prefix = "",
-                        -- },
-                    }
-                },
+                -- rust_analyzer = {
+                -- Handled by rustaceanvim
+                -- },
                 -- Don't think these settings are correct...
                 jsonls = {
                     settings = {
@@ -388,24 +405,10 @@ require("lazy").setup({
                 -- tsserver = {},
                 --
 
-                lua_ls = {
-                    -- cmd = {...},
-                    -- filetypes { ...},
-                    -- capabilities = {},
-                    settings = {
-                        Lua = {
-                            diagnostics = {
-                                -- Get the language server to recognize teh "vim" global"
-                                globals = { "vim" },
-                            },
-                            completion = {
-                                callSnippet = 'Replace',
-                            },
-                            -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-                            -- diagnostics = { disable = { 'missing-fields' } },
-                        },
-                    },
-                },
+                -- Handled by folke/lazydev.nvim
+                -- lua_ls = {
+                --
+                -- },
             }
 
             -- Ensure the servers and tools above are installed
