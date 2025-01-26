@@ -269,6 +269,32 @@ require("lazy").setup({
         lazy = false,   -- This plugin is already lazy
     },
 
+    {
+        'saecki/crates.nvim',
+        tag = 'stable',
+        config = function()
+            require('crates').setup {
+                completion = {
+                    cmp = {
+                        enabled = true,
+                    },
+                    crates = {
+                        enabled = true,
+                        max_results = 8,
+                        min_chars = 2,
+                    }
+
+                },
+                lsp = {
+                    enabled = true,
+                    actions = true,
+                    completion = true,
+                    hover = true,
+                }
+            }
+        end
+    },
+
     { -- LSP Configuration & Plugins
         'neovim/nvim-lspconfig',
         dependencies = {
@@ -557,6 +583,7 @@ require("lazy").setup({
                     { name = 'nvim_lsp' },
                     { name = 'luasnip' },
                     { name = 'path' },
+                    { name = 'crates' },
                 },
             }
         end,

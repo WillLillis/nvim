@@ -59,7 +59,7 @@ vim.keymap.set('c', ':W', ':W<CR>', { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>tr", "<cmd>Trouble diagnostics toggle focus=true<CR>",
     { desc = "[tr] Trouble" })
 vim.keymap.set("n", "<leader>tc", "<cmd>Trouble diagnostics toggle filter.buf=0 focus=true<CR>",
-    { desc = "[tr] Trouble" })
+    { desc = "[tc] Trouble" })
 
 
 vim.keymap.set('t', '<esc>', "<C-\\><C-n>") -- esc to exit insert mode
