@@ -439,7 +439,7 @@ require("lazy").setup({
                     vim.keymap.set("n", "<leader>rn",
                         function()
                             vim.api.nvim_command([[:Lspsaga rename]])
-                            local keys = vim.api.nvim_replace_termcodes('<ESC>A', true, false, true)
+                            local keys = vim.api.nvim_replace_termcodes('<ESC>_', true, false, true)
                             vim.api.nvim_feedkeys(keys, 'm', false)
                         end, { silent = true, desc = "[rn] Rename symbol" })
                     -- vim.keymap.set("n", "<leader>rn", function() require('lspsaga').lua.lspsaga.rename.new() end,
