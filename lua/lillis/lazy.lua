@@ -308,8 +308,45 @@ require("lazy").setup({
 
     {
         "mrcjkb/rustaceanvim",
-        version = '^5', -- Recommended
-        lazy = false,   -- This plugin is already lazy
+        version = '^5',
+        lazy = false,
+        config = function()
+            vim.g.rustaceanvim = {
+                -- Plugin configuration
+                tools = {
+                },
+                -- LSP configuration
+                server = {
+                    on_attach = function(client, bufnr)
+                        -- you can also put keymaps in here
+                        -- Workaround for diagnostics dissapearing on save in certain crates
+                        vim.keymap.set('n', '<leader>cc', ':RustLsp flyCheck<CR>',
+                            { desc = "[cc] cargo flycheck" })
+                    end,
+                    default_settings = {
+                        -- rust-analyzer language server configuration
+                        ['rust-analyzer'] = {
+                            checkOnSave = true, -- Enable checking on save
+                            cargo = {
+                                targetDir = true,
+                                features = "all",
+                            },
+                            check = {
+                                targetDir = true,
+                                features = "all",
+                            },
+                            -- procMacro = {
+                            --     enable = true,
+                            -- },
+                        },
+                    },
+                },
+                -- DAP configuration
+                dap = {
+                    -- TODO: Set this up?
+                },
+            }
+        end
     },
 
     {
