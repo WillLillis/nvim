@@ -35,6 +35,49 @@ require("lazy").setup({
         end,
     },
 
+    {
+        "zbirenbaum/copilot.lua",
+        cmd = "Copilot",
+        event = "InsertEnter",
+        config = function()
+            require("copilot").setup({
+                suggestion = {
+                    enabled = true,
+                    auto_trigger = true,
+                },
+                panel = {
+                    enabled = true,
+                    position = "bottom",
+                    auto_refresh = true,
+                },
+            })
+
+            vim.keymap.set("i", "<C-a>", function() require("copilot.suggestion").accept() end,
+                { expr = true, silent = true, noremap = true })
+            vim.keymap.set("i", "<C-Tab>", function() require("copilot.suggestion").next() end,
+                { expr = true, silent = true, noremap = true })
+            vim.keymap.set("i", "<C-S-Tab>", function() require("copilot.suggestion").prev() end,
+                { expr = true, silent = true, noremap = true })
+            vim.keymap.set("n", "<leader>co", function() vim.cmd(':Copilot panel') end,
+                { expr = true, silent = true, noremap = true })
+
+            -- vim.api.nvim_set_keymap("i", "<C-l>", 'copilot#Accept("<CR>")',
+            --     { expr = true, silent = true, noremap = true })
+            -- vim.api.nvim_set_keymap("i", "<C-N>", 'copilot#Next()', { expr = true, silent = true, noremap = true })
+            -- vim.api.nvim_set_keymap("i", "<C-P>", 'copilot#Previous()', { expr = true, silent = true, noremap = true })
+            -- vim.api.nvim_set_keymap("i", "<C-e>", 'copilot#Dismiss()', { expr = true, silent = true, noremap = true })
+            vim.api.nvim_set_keymap("n", "<leader>co", ":Copilot panel<CR>", { noremap = true, silent = true })
+        end,
+    },
+
+    -- {
+    --     "zbirenbaum/copilot-cmp",
+    --     dependencies = { "copilot.lua" },
+    --     config = function()
+    --         require("copilot_cmp").setup()
+    --     end,
+    -- },
+
     -- Developing
     {
         -- "~/plugins/lsploghover.nvim"
@@ -584,6 +627,7 @@ require("lazy").setup({
                     { name = 'luasnip' },
                     { name = 'path' },
                     { name = 'crates' },
+                    -- { name = 'copilot' },
                 },
             }
         end,
