@@ -427,9 +427,13 @@ require("lazy").setup({
                         { desc = "[vd] View document Symbols" })
                     vim.keymap.set("n", "<leader>vd", function() vim.diagnostic.open_float() end,
                         { desc = "[vd] View Diagnostic" })
-                    vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end,
+                    -- vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end,
+                    --     { desc = "[d goto next Diagnostic" })
+                    vim.keymap.set("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end,
                         { desc = "[d goto next Diagnostic" })
-                    vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end,
+                    -- vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end,
+                    --     { desc = "]d goto previous Diagnostic" })
+                    vim.keymap.set("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end,
                         { desc = "]d goto previous Diagnostic" })
                     vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end,
                         { desc = "[vca] View Code Actions" })
