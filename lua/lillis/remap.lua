@@ -1,5 +1,4 @@
 vim.g.mapleader = " "
-vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
@@ -34,12 +33,10 @@ vim.keymap.set("n", "<leader>d", "\"_d")
 vim.keymap.set("v", "<leader>d", "\"_d")
 
 vim.keymap.set("v", "<leader>d", "\"_d")
-
--- This is going to get me cancelled
-vim.keymap.set("i", "<C-c>", "<Esc>")
+vim.keymap.set("n", "d", "\"_d")
+-- vim.keymap.set("n", "v", "\"_d")
 
 vim.keymap.set("n", "Q", "<nop>")
--- broken because of windows?
 vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux new tmux-sessionizer<CR>")
 
 vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz")
@@ -50,9 +47,8 @@ vim.keymap.set("n", "leader<j>", "<cmd>lprev<CR>zz")
 vim.keymap.set("n", "<leader>s", ":%s/\\<<C-r><C-w>\\>/<C-r><C-w>/gI<Left><Left>")
 -- vim.keymap.set("n", "<leader>x", "<cmd>!chmod + x %<CR>", { silent = true })
 
--- Define a custom command ":W" that executes":w"
+-- TODO: Better way to do this?
 vim.cmd('command! -nargs=0 W w')
--- Map the key sequence ":W" to the custom command
 vim.keymap.set('c', ':W', ':W<CR>', { noremap = true, silent = true })
 
 -- Remap to toggle on the Trouble plugin window
@@ -62,7 +58,7 @@ vim.keymap.set("n", "<leader>tc", "<cmd>Trouble diagnostics toggle filter.buf=0 
     { desc = "[tc] Trouble" })
 
 
-vim.keymap.set('t', '<esc>', "<C-\\><C-n>") -- esc to exit insert mode
+vim.keymap.set('t', '<esc>', "<C-\\><C-n>")
 
 -- Delete/Change inside and around pipes, useful for capture groups in Zig
 vim.keymap.set('n', 'di|', 'T|vt|d')

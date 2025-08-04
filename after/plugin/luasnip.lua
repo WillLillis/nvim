@@ -86,16 +86,26 @@ local fmt = require("luasnip.extras.fmt").fmt
 -- })
 
 -- Snippet for writing an XML file for asm-lsp
+-- ls.add_snippets("xml", {
+--     snippet("<D",
+--         fmt(
+--             "<Directive name=\"{}\" md_displaytext=\".{}{}\" url_fragment=\"{}\" md_description=\"{}\">\n</Directive>",
+--             {
+--                 i(1, "Name"),
+--                 rep(1),
+--                 i(2, "Markdown Display Text"),
+--                 i(3, "URL Fragment"),
+--                 i(4, "Markdown Description"),
+--             })
+--     ),
+-- })
 ls.add_snippets("xml", {
-    snippet("<D",
+    snippet("<d",
         fmt(
-            "<Directive name=\"{}\" md_displaytext=\".{}{}\" url_fragment=\"{}\" md_description=\"{}\">\n</Directive>",
+            "<directive name=\"{}\" tool=\"fasm\">\n\t<description>{}</description>\n</directive>",
             {
                 i(1, "Name"),
-                rep(1),
-                i(2, "Markdown Display Text"),
-                i(3, "URL Fragment"),
-                i(4, "Markdown Description"),
+                i(2, ""),
             })
     ),
 })

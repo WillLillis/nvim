@@ -6,7 +6,8 @@ vim.keymap.set('n', '<leader>pf', builtin.find_files,
 vim.keymap.set('n', '<C-p>', builtin.git_files,
     { desc = "<C-p> find git files" })
 vim.keymap.set('n', '<leader>ps', function()
-    builtin.grep_string({ search = vim.fn.input("Grep > ") });
+    --builtin.grep_string({ search = vim.fn.input("Grep > ") });
+    builtin.live_grep();
 end, { desc = "[ps] Project Search" })
 
 telescope.setup {
@@ -28,6 +29,9 @@ telescope.setup {
     },
 }
 
+vim.keymap.set('n', '<leader>td', ":Telescope diagnostics<CR>",
+    { desc = "[td] Telescope diagnostics" })
+
 vim.keymap.set('n', '<leader>fb', ":Telescope file_browser<CR>",
     { desc = "[fb] File browser in current working directory" })
 
@@ -37,8 +41,8 @@ vim.keymap.set('n', '<leader>fc', ":Telescope file_browser path=%:p:h select_buf
 vim.keymap.set('n', '<leader>fp', ":Telescope file_browser path=~/projects/<CR>",
     { desc = "[fp] File browser in ~/projects" })
 
-vim.keymap.set('n', '<leader>ff', ":Telescope find_files<CR>",
-    { desc = "[ff] Find files in current working directory" })
+-- vim.keymap.set('n', '<leader>ff', ":Telescope find_files<CR>",
+--     { desc = "[ff] Find files in current working directory" })
 
 vim.keymap.set('n', '<leader>/', function()
     builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {

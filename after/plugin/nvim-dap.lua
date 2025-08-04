@@ -6,6 +6,11 @@ dap.adapters.gdb = {
     command = 'gdb',
     args = { "-i", "dap" }
 }
+-- dap.adapters.lldb = {
+--     type = 'executable',
+--     command = 'lldb',
+--     args = { "-i", "dap" }
+-- }
 -- Move over utils file?
 
 --- Returns the time a file was last modified, or nil if something went wrong
@@ -63,11 +68,11 @@ end
 
 dap.configurations.rust = {
     {
-        type = 'gdb',
+        type = 'gdb', -- TODO: lldb here
         name = 'Debug',
         request = 'launch',
         program = function()
-            local bin_path = get_rust_bin()
+            -- local bin_path = get_rust_bin()
             if bin_path == nil then
                 return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
             else
@@ -80,7 +85,8 @@ dap.configurations.rust = {
         runInTerminal = false,
         preLaunchTask = {
             command = "cargo",
-            args = { "run" },
+            -- args = { "run" },
+            args = { "test test_highlighting_cancellation" },
             type = "shell"
         }
     },
@@ -143,6 +149,9 @@ end)
 vim.keymap.set('n', '<Leader>?', function()
     require('dapui').eval(nil, { enter = true }) -- false positive from lsp about required fields here?
 end)
+vim.keymap.set('n', '<Leader>aw', function()
+    require('dapui').elements.watches.add(vim.fn.expand('<cword>'))
+end, { desc = "[aw] Add Watch under cursor" })
 -- Dap UI hooks
 
 dap.listeners.after.event_initialized["dapui_config"] = function()

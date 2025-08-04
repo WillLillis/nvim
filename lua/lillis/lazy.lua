@@ -29,10 +29,46 @@ require("lazy").setup({
                     light = "lotus"
                 },
             })
-            -- vim.cmd("colorscheme kanagawa-dragon") -- Darker but worse contrast
-            vim.cmd("colorscheme kanagawa-wave")
+            vim.cmd("colorscheme kanagawa-dragon") -- Darker but worse contrast
+            -- vim.cmd("colorscheme kanagawa-wave")
             -- vim.cmd("colorscheme kanagawa")
         end,
+    },
+
+    -- lol
+    {
+        "seandewar/actually-doom.nvim"
+    },
+
+    {
+        'isti115/agda.nvim',
+        dependencies = { "nvim-lua/plenary.nvim" },
+    },
+
+    {
+        "dmtrKovalenko/fff.nvim",
+        dir = "/home/lillis/projects/fff.nvim/",
+        dev = true,
+        lazy = false,
+        build = "cargo build --release",
+        -- or if you are using nixos
+        -- build = "nix run .#release",
+        opts = {
+            -- pass here all the options
+        },
+        keys = {
+            {
+                "<leader>ff", -- try it if you didn't it is a banger keybinding for a picker
+                function()
+                    -- vim.cmd(':FFFFind')
+                    require("fff").find_files() -- bad docs?
+                end,
+                desc = "Toggle FFF",
+            },
+            move_up = { '<Up>', '<C-p>', '<C-k>' },  -- Three ways to move up
+            close = { '<Esc>', '<C-c>' },            -- Two ways to close
+            select = '<CR>',                         -- Single binding still works
+        },
     },
 
     {
@@ -182,8 +218,7 @@ require("lazy").setup({
         config = function()
             vim.o.timeout = true
             vim.o.timeoutlen = 300
-            require("which-key").setup {
-            }
+            require("which-key").setup {}
         end
     },
 
@@ -415,6 +450,11 @@ require("lazy").setup({
             vim.api.nvim_create_autocmd('LspAttach', {
                 group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
                 callback = function(event)
+                    vim.keymap.set("n", "<C-w>[", function()
+                        vim.cmd("vsplit")
+                        vim.cmd("wincmd l")
+                        require('telescope.builtin').lsp_definitions()
+                    end, { desc = "C-w] Goto Definition (vertical split)" })
                     vim.keymap.set("n", "gd", function() require('telescope.builtin').lsp_definitions() end,
                         { desc = "gd Goto Definition" })
                     vim.keymap.set('n', "<leader>D", function() require('telescope.builtin').lsp_type_definitions() end,
@@ -437,8 +477,8 @@ require("lazy").setup({
                         { desc = "]d goto previous Diagnostic" })
                     vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end,
                         { desc = "[vca] View Code Actions" })
-                    vim.keymap.set('n', '<leader>vrr', function() require('telescope.builtin').lsp_references() end,
-                        { desc = "[vrr] View References" })
+                    vim.keymap.set('n', '<leader>vr', function() require('telescope.builtin').lsp_references() end,
+                        { desc = "[vr] View References" })
                     -- vim.keymap.set("n", "<leader>rn", function() vim.lsp.buf.rename() end,
                     vim.keymap.set("n", "<leader>rn",
                         function()
@@ -478,6 +518,10 @@ require("lazy").setup({
             --  When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
             --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
             local capabilities = vim.lsp.protocol.make_client_capabilities()
+            capabilities.workspace = capabilities.workspace or {}
+            capabilities.workspace.didChangeWatchedFiles = {
+                dynamicRegistration = true,
+            }
             capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
             -- Enable the following language servers
@@ -491,21 +535,21 @@ require("lazy").setup({
             --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
             local servers = {
                 clangd = {},
-                gopls = {},
-                pyright = {},
+                -- gopls = {},
+                -- pyright = {},
                 -- rust_analyzer = {
                 -- Handled by rustaceanvim
                 -- },
                 -- Don't think these settings are correct...
-                jsonls = {
-                    settings = {
-                        capabilities = capabilities,
-                        json = {
-                            schemas = require('schemastore').json.schemas(),
-                            validate = { enable = true },
-                        },
-                    },
-                },
+                -- jsonls = {
+                --     settings = {
+                --         capabilities = capabilities,
+                --         json = {
+                --             schemas = require('schemastore').json.schemas(),
+                --             validate = { enable = true },
+                --         },
+                --     },
+                -- },
                 -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
                 --
                 -- Some languages (like typescript) have entire language plugins that can be useful:
