@@ -77,9 +77,9 @@ require("lazy").setup({
                 end,
                 desc = "Toggle FFF",
             },
-            move_up = { '<Up>', '<C-p>', '<C-k>' },  -- Three ways to move up
-            close = { '<Esc>', '<C-c>' },            -- Two ways to close
-            select = '<CR>',                         -- Single binding still works
+            move_up = { '<Up>', '<C-p>', '<C-k>' }, -- Three ways to move up
+            close = { '<Esc>', '<C-c>' },           -- Two ways to close
+            select = '<CR>',                        -- Single binding still works
         },
     },
 
@@ -234,22 +234,22 @@ require("lazy").setup({
         end
     },
 
-    {
-        "OXY2DEV/markview.nvim",
-        lazy = false, -- Recommended
-        -- ft = "markdown" -- If you decide to lazy-load anyway
-        vim.keymap.set("n", "<leader>tm", function() vim.cmd("Markview toggle") end,
-            { desc = "[tm] Toggle markdown view" }),
-
-        dependencies = {
-            -- You will not need this if you installed the
-            -- parsers manually
-            -- Or if the parsers are in your $RUNTIMEPATH
-            "nvim-treesitter/nvim-treesitter",
-
-            "nvim-tree/nvim-web-devicons"
-        }
-    },
+    -- {
+    --     "OXY2DEV/markview.nvim",
+    --     lazy = false, -- Recommended
+    --     -- ft = "markdown" -- If you decide to lazy-load anyway
+    --     vim.keymap.set("n", "<leader>tm", function() vim.cmd("Markview toggle") end,
+    --         { desc = "[tm] Toggle markdown view" }),
+    --
+    --     dependencies = {
+    --         -- You will not need this if you installed the
+    --         -- parsers manually
+    --         -- Or if the parsers are in your $RUNTIMEPATH
+    --         "nvim-treesitter/nvim-treesitter",
+    --
+    --         "nvim-tree/nvim-web-devicons"
+    --     }
+    -- },
 
     {
         "nvim-telescope/telescope.nvim",
