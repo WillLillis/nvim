@@ -6,97 +6,56 @@ dap.adapters.gdb = {
     command = 'gdb',
     args = { "-i", "dap" }
 }
--- dap.adapters.lldb = {
---     type = 'executable',
---     command = 'lldb',
---     args = { "-i", "dap" }
--- }
--- Move over utils file?
 
---- Returns the time a file was last modified, or nil if something went wrong
---- @param path string
---- @return integer|nil
-local function get_modified_timestamp(path)
-    -- TODO: See if there's an analogous command to use on Windows
-    local f = io.popen(string.format("stat -c %%Y %s", path))
-    if not f then
-        return nil
-    end
+dap.adapters.lldb_zig = {
+    type = 'executable',
+    -- Use jacobly0's fork
+    command = '/home/lillis/projects/llvm-project/build/bin/lldb-dap',
+    args = {}
+}
 
-    local last_modified = f:read()
-    if not last_modified then
-        return nil
-    else
-        return tonumber(last_modified)
-    end
-end
-
---- Returns the path to the debug build of the current rust project, if possible
---- Opens a floating window warning the user if the current buffer was modifed
---- after the last build
---- @return string|nil
-local function get_rust_bin()
-    local project_dirs = vim.lsp.buf.list_workspace_folders()
-    if not project_dirs or #project_dirs == 0 or not project_dirs[1] then
-        return nil
-    end
-    local project_dir = project_dirs[1]
-
-    local name_start = string.len(project_dir) - (string.find(string.reverse(project_dir), '/') - 2)
-    local bin_name = string.sub(project_dir, name_start)
-    local bin_path = project_dir .. "/target/debug/" .. bin_name
-
-    local bin_last_modified = get_modified_timestamp(bin_path)
-    if bin_last_modified == nil then
-        return nil
-    else
-        local buf_path = vim.api.nvim_buf_get_name(0)
-        local buf_last_modified = get_modified_timestamp(buf_path)
-        if buf_last_modified == nil then
-            return nil
-        end
-
-        if buf_last_modified > bin_last_modified then
-            -- Better way to do this?
-            vim.lsp.util.open_floating_preview({ "# WARNING\nCurrent buffer modified since last build" },
-                "markdown", {})
-        end
-
-        return bin_path
-    end
-end
+dap.adapters.lldb = {
+    type = 'executable',
+    command = 'lldb-dap',
+}
 
 dap.configurations.rust = {
     {
-        type = 'gdb', -- TODO: lldb here
+        type = 'lldb',
         name = 'Debug',
         request = 'launch',
         program = function()
-            -- local bin_path = get_rust_bin()
-            if bin_path == nil then
-                return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
-            else
-                return bin_path
-            end
+            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
         end,
         cwd = vim.fn.getcwd(),
         -- stopOnEntry = false,
         args = {},
         runInTerminal = false,
-        preLaunchTask = {
-            command = "cargo",
-            -- args = { "run" },
-            args = { "test test_highlighting_cancellation" },
-            type = "shell"
-        }
+        initCommands = function()
+            -- Find out where to look for the pretty printer Python module.
+            local rustc_sysroot = vim.fn.trim(vim.fn.system 'rustc --print sysroot')
+            assert(
+                vim.v.shell_error == 0,
+                'failed to get rust sysroot using `rustc --print sysroot`: '
+                .. rustc_sysroot
+            )
+            local script_file = rustc_sysroot .. '/lib/rustlib/etc/lldb_lookup.py'
+            local commands_file = rustc_sysroot .. '/lib/rustlib/etc/lldb_commands'
+
+            return {
+                ([[!command script import '%s']]):format(script_file),
+                ([[command source '%s']]):format(commands_file),
+            }
+        end,
     },
 }
 
 -- Make sure you compile with -g !!!!
+-- TODO: Compile with -gdwarf-4?
 dap.configurations.c = {
     {
         name = "Launch",
-        type = "gdb",
+        type = "lldb",
         request = "launch",
         program = function()
             return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
@@ -106,18 +65,51 @@ dap.configurations.c = {
     },
 }
 
--- TODO: Better executable file detection, as in what I did with rust
+-- Make sure you compile with -g !!!!
+-- TODO: Compile with -gdwarf-4?
+dap.configurations.cpp = {
+    {
+        name = "Launch",
+        type = "lldb",
+        request = "launch",
+        program = function()
+            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+        end,
+        cwd = "${workspaceFolder}",
+        stopAtBeginningOfMainSubprogram = false,
+        initCommands = function()
+            local lldb_python_path = vim.fn.trim(vim.fn.system 'lldb -P')
+            assert(
+                vim.v.shell_error == 0,
+                'failed to get lldb ptyhong path using `lldb -P`: '
+                .. lldb_python_path
+            )
+            local init_file = lldb_python_path .. '/lldb/formatters/cpp/__init__.py'
+            return {
+                ([[!command script import '%s']]):format(init_file),
+            }
+        end
+    },
+}
+
 dap.configurations.zig = {
     {
         name = 'Launch',
-        type = 'gdb',
+        type = 'lldb_zig',
         request = 'launch',
         program = function()
             return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
         end,
         cwd = '${workspaceFolder}',
-        stopOnEntry = false,
-        args = { "build-exe", "/home/lillis/projects/test_zig/src/main.zig" },
+        stopAtBeginningOfMainSubprogram = false,
+        initCommands = function()
+            return {
+                [[command script import /home/lillis/projects/zig/tools/lldb_pretty_printers.py]],
+                -- Only used for llvm backend:
+                -- [[type category enable zig.lang]],
+                -- [[type category enable zig.std]]
+            }
+        end,
     },
 }
 
@@ -147,11 +139,14 @@ vim.keymap.set('n', '<Leader>ds', function()
 end)
 -- Eval var under cursor
 vim.keymap.set('n', '<Leader>?', function()
-    require('dapui').eval(nil, { enter = true }) -- false positive from lsp about required fields here?
+    require('dapui').eval(nil, { enter = true, context = "hover" }) -- false positive from lsp about required fields here?
 end)
 vim.keymap.set('n', '<Leader>aw', function()
     require('dapui').elements.watches.add(vim.fn.expand('<cword>'))
 end, { desc = "[aw] Add Watch under cursor" })
+vim.keymap.set('n', '<Leader>ca', function()
+    dapui.close()
+end, { desc = "[ca] Close All dapui windows" })
 -- Dap UI hooks
 
 dap.listeners.after.event_initialized["dapui_config"] = function()
