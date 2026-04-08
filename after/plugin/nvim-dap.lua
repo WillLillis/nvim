@@ -1,6 +1,7 @@
 local dap, dapui = require("dap"), require("dapui")
 
 
+-- TODO: Remove this?
 dap.adapters.gdb = {
     type = 'executable',
     command = 'gdb',
@@ -10,7 +11,12 @@ dap.adapters.gdb = {
 dap.adapters.lldb_zig = {
     type = 'executable',
     -- Use jacobly0's fork
-    command = '/home/lillis/projects/llvm-project/build/bin/lldb-dap',
+    -- cmake llvm -G Ninja -B build -DLLVM_ENABLE_PROJECTS="clang;lldb" -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLLVM_ENABLE_ASSERTIONS=ON -DLLDB_ENABLE_LIBEDIT=ON -DLLDB_ENABLE_PYTHON=ON
+    -- cmake --build build --target lldb --target lldb-server --target lldb-dap
+    -- command = '/home/lillis/projects/llvm-project/build/bin/lldb-dap',
+    -- Copied the binary, hopefully it still works. Otherwise we can check out jacobly0's branch
+    -- and rebuild
+    command = '/home/lillis/projects/lldb-dap',
     args = {}
 }
 
@@ -20,6 +26,7 @@ dap.adapters.lldb = {
 }
 
 dap.configurations.rust = {
+    -- TODO: Figure out how to pass args to the program without hardcoding here
     {
         type = 'lldb',
         name = 'Debug',
@@ -29,10 +36,11 @@ dap.configurations.rust = {
         end,
         cwd = vim.fn.getcwd(),
         -- stopOnEntry = false,
-        args = {},
+        -- args = { "ChaoYanZeCuHeiTif-1.xml" },
+        args = { "test_load_wasm_ruby_language"  },
         runInTerminal = false,
         initCommands = function()
-            -- Find out where to look for the pretty printer Python module.
+            -- Find where to look for the pretty printer Python module.
             local rustc_sysroot = vim.fn.trim(vim.fn.system 'rustc --print sysroot')
             assert(
                 vim.v.shell_error == 0,
@@ -58,7 +66,7 @@ dap.configurations.c = {
         type = "lldb",
         request = "launch",
         program = function()
-            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+            return vim.fn.input('Path to C executable: ', vim.fn.getcwd() .. '/', 'file')
         end,
         cwd = "${workspaceFolder}",
         stopAtBeginningOfMainSubprogram = false,
@@ -141,6 +149,10 @@ end)
 vim.keymap.set('n', '<Leader>?', function()
     require('dapui').eval(nil, { enter = true, context = "hover" }) -- false positive from lsp about required fields here?
 end)
+-- Dereference and eval var under cursor
+vim.keymap.set('n', '<Leader><Leader>?', function()
+    require('dapui').eval('*' .. require('dapui.util').get_current_expr(), { enter = true, context = "hover" }) -- false positive from lsp about required fields here?
+end)
 vim.keymap.set('n', '<Leader>aw', function()
     require('dapui').elements.watches.add(vim.fn.expand('<cword>'))
 end, { desc = "[aw] Add Watch under cursor" })
@@ -163,4 +175,25 @@ end
 
 require("dap")
 require("dapui").setup()
-require("nvim-dap-virtual-text").setup({})
+-- TODO: Delete setup function?
+require("nvim-dap-virtual-text").setup({
+    require("nvim-dap-virtual-text").setup {
+        enabled = true,                     -- Enable the plugin
+        highlight_changed_variables = true, -- Highlight changes for easier tracking
+        highlight_new_as_changed = false,   -- Treat new vars as changed (optional)
+        show_stop_reason = true,            -- Show exception reasons if stopped
+        commented = false,                  -- Prefix with language comment string (e.g., for readability)
+        only_first_definition = true,       -- Show only at first definition to avoid clutter
+        all_references = false,             -- If true, show on all refs (can be noisy)
+        all_frames = true,                  -- If true, show for all stack frames (experimental; test for your adapter)
+        virt_text_pos = 'inline',           -- or 'eol', -- 'inline' for Neovim 0.10+, 'eol' otherwise
+        -- Customize display if needed (e.g., to filter or format return values)
+        display_callback = function(variable, buf, stackframe, node, options)
+            if options.virt_text_pos == 'inline' then
+                return ' = ' .. variable.value
+            else
+                return variable.name .. ' = ' .. variable.value
+            end
+        end,
+    }
+})

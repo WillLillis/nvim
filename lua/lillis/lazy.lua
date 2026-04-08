@@ -53,6 +53,75 @@ require("lazy").setup({
     },
 
     {
+        "akinsho/toggleterm.nvim",
+        init = function()
+            vim.keymap.set("t", "<ESC>", "<C-\\><C-n>", { noremap = true, silent = true })
+        end,
+        ---@type ToggleTermConfig
+        opts = {
+            shading_factor = 0.3, -- the degree by which to darken to terminal colour, default: 1 for dark backgrounds, 3 for light
+            direction = "float",
+            persist_mode = false,
+            auto_scroll = false,
+            -- ?????
+            -- size = function(term)
+            --     if term.direction == "horizontal" then
+            --         return vim.o.lines * 0.0
+            --     elseif term.direction == "vertical" then
+            --         return vim.o.columns * 0.0
+            --     end
+            -- end,
+        },
+        keys = {
+            {
+                "<leader>1",
+                function()
+                    require("toggleterm").toggle(1, 0, "float")
+                end,
+                desc = "Terminal 1",
+            },
+            {
+                "<leader>2",
+                function()
+                    require("toggleterm").toggle(2, 0, "float")
+                end,
+                desc = "Terminal 2",
+            },
+            {
+                "<leader>3",
+                function()
+                    require("toggleterm").toggle(3, 0, "float")
+                end,
+                desc = "Terminal 3",
+            },
+            {
+                "<leader>4",
+                function()
+                    require("toggleterm").toggle(4, 0, "float")
+                end,
+                desc = "Terminal 4",
+            },
+            {
+                "<leader>5",
+                function()
+                    require("toggleterm").toggle(5, 0, "float")
+                end,
+                desc = "Terminal 5",
+            },
+            {
+                "<leader>Tn",
+                "<cmd>ToggleTermSetName<cr>",
+                desc = "Set Terminal Name",
+            },
+            {
+                "<leader>Ts",
+                "<cmd>TermSelect<cr>",
+                desc = "Select Terminal",
+            },
+        },
+    },
+
+    {
         'isti115/agda.nvim',
         dependencies = { "nvim-lua/plenary.nvim" },
     },
@@ -83,40 +152,40 @@ require("lazy").setup({
         },
     },
 
-    {
-        "zbirenbaum/copilot.lua",
-        cmd = "Copilot",
-        event = "InsertEnter",
-        config = function()
-            require("copilot").setup({
-                suggestion = {
-                    enabled = true,
-                    auto_trigger = true,
-                },
-                panel = {
-                    enabled = true,
-                    position = "bottom",
-                    auto_refresh = true,
-                },
-            })
-
-            vim.keymap.set("i", "<C-a>", function() require("copilot.suggestion").accept() end,
-                { expr = true, silent = true, noremap = true })
-            vim.keymap.set("i", "<C-Tab>", function() require("copilot.suggestion").next() end,
-                { expr = true, silent = true, noremap = true })
-            vim.keymap.set("i", "<C-S-Tab>", function() require("copilot.suggestion").prev() end,
-                { expr = true, silent = true, noremap = true })
-            vim.keymap.set("n", "<leader>co", function() vim.cmd(':Copilot panel') end,
-                { expr = true, silent = true, noremap = true })
-
-            -- vim.api.nvim_set_keymap("i", "<C-l>", 'copilot#Accept("<CR>")',
-            --     { expr = true, silent = true, noremap = true })
-            -- vim.api.nvim_set_keymap("i", "<C-N>", 'copilot#Next()', { expr = true, silent = true, noremap = true })
-            -- vim.api.nvim_set_keymap("i", "<C-P>", 'copilot#Previous()', { expr = true, silent = true, noremap = true })
-            -- vim.api.nvim_set_keymap("i", "<C-e>", 'copilot#Dismiss()', { expr = true, silent = true, noremap = true })
-            vim.api.nvim_set_keymap("n", "<leader>co", ":Copilot panel<CR>", { noremap = true, silent = true })
-        end,
-    },
+    -- {
+    --     "zbirenbaum/copilot.lua",
+    --     cmd = "Copilot",
+    --     event = "InsertEnter",
+    --     config = function()
+    --         require("copilot").setup({
+    --             suggestion = {
+    --                 enabled = true,
+    --                 auto_trigger = true,
+    --             },
+    --             panel = {
+    --                 enabled = true,
+    --                 position = "bottom",
+    --                 auto_refresh = true,
+    --             },
+    --         })
+    --
+    --         vim.keymap.set("i", "<C-a>", function() require("copilot.suggestion").accept() end,
+    --             { expr = true, silent = true, noremap = true })
+    --         vim.keymap.set("i", "<C-Tab>", function() require("copilot.suggestion").next() end,
+    --             { expr = true, silent = true, noremap = true })
+    --         vim.keymap.set("i", "<C-S-Tab>", function() require("copilot.suggestion").prev() end,
+    --             { expr = true, silent = true, noremap = true })
+    --         vim.keymap.set("n", "<leader>co", function() vim.cmd(':Copilot panel') end,
+    --             { expr = true, silent = true, noremap = true })
+    --
+    --         -- vim.api.nvim_set_keymap("i", "<C-l>", 'copilot#Accept("<CR>")',
+    --         --     { expr = true, silent = true, noremap = true })
+    --         -- vim.api.nvim_set_keymap("i", "<C-N>", 'copilot#Next()', { expr = true, silent = true, noremap = true })
+    --         -- vim.api.nvim_set_keymap("i", "<C-P>", 'copilot#Previous()', { expr = true, silent = true, noremap = true })
+    --         -- vim.api.nvim_set_keymap("i", "<C-e>", 'copilot#Dismiss()', { expr = true, silent = true, noremap = true })
+    --         vim.api.nvim_set_keymap("n", "<leader>co", ":Copilot panel<CR>", { noremap = true, silent = true })
+    --     end,
+    -- },
 
     -- {
     --     "zbirenbaum/copilot-cmp",
@@ -330,7 +399,7 @@ require("lazy").setup({
     {
         "nvim-treesitter/nvim-treesitter",
         build = ":TSUpdate",
-        lazy = true,
+        lazy = false,
     },
 
     {
@@ -376,6 +445,7 @@ require("lazy").setup({
                             checkOnSave = true, -- Enable checking on save
                             cargo = {
                                 targetDir = true,
+                                buildScripts = { enable = true }, -- does this work?
                                 features = "all",
                             },
                             check = {
@@ -446,7 +516,7 @@ require("lazy").setup({
                     lightbulb = { enable = false }
                 },
                 dependencies = {
-                    'nvim-treesitter/nvim-treesitter',
+                    --'nvim-treesitter/nvim-treesitter',
                     'nvim-tree/nvim-web-devicons',
                 }
             },
