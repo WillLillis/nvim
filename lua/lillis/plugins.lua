@@ -21,7 +21,12 @@ vim.api.nvim_create_autocmd("PackChanged", {
                 pcall(vim.cmd, "TSUpdate")
             end)
         elseif name == "fff.nvim" then
-            vim.system({ "cargo", "build", "--release" }, { cwd = path }):wait()
+            -- Plugin's own download helper: tries a prebuilt binary first,
+            -- falls back to `cargo build --release`. We need to packadd the
+            -- plugin first since the download module isn't on the runtime
+            -- path yet at install-event time.
+            if not ev.data.active then vim.cmd.packadd("fff.nvim") end
+            require("fff.download").download_or_build_binary()
         end
     end,
 })
