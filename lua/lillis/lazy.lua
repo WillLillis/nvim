@@ -560,7 +560,7 @@ require("lazy").setup({
                         { desc = "]d goto previous Diagnostic" })
                     vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end,
                         { desc = "[vca] View Code Actions" })
-                    vim.keymap.set('n', '<leader>vr', function() require('telescope.builtin').lsp_references() end,
+                    vim.keymap.set('n', '<leader>vr', function() require('telescope.builtin').lsp_references({ include_current_line = true }) end,
                         { desc = "[vr] View References" })
                     -- vim.keymap.set("n", "<leader>rn", function() vim.lsp.buf.rename() end,
                     vim.keymap.set("n", "<leader>rn",
