@@ -36,4 +36,6 @@ vim.opt.ve = { "onemore" }
 vim.g.zig_fmt_autosave = 0
 vim.api.nvim_set_hl(0, '@lsp.type.string.zig', {})
 vim.env.RUSTFLAGS = "--cfg=clippy"
-vim.cmd([[highlight NvimWindowHighlights guibg=#A88D29 guifg=#FFFFFF]])
+
+-- Statusline lives in its own module (`lua/lillis/statusline.lua`) and
+-- is required from init.lua.

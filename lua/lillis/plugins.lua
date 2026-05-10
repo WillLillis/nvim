@@ -44,7 +44,6 @@ local manifest = {
     "lsploghover",
     "rustaceanvim",
     "crates",
-    "schemastore",
 
     "completion",
 
@@ -52,14 +51,7 @@ local manifest = {
     "trouble",
     "lazygit",
 
-    "lualine",
     "noice",
-    -- wilder: disabled. The popupmenu renderer breaks on nvim 0.13's
-    -- internal API (errors flood the screen on cmdline completion). User
-    -- wanted to replace it anyway (Python install hassle). Replacement
-    -- candidate: noice's cmdline UI is already loaded.
-    -- "wilder",
-    "snacks",
     "which-key",
 
     "comment",
@@ -75,16 +67,11 @@ local manifest = {
     -- catches up to a stable zig.
     -- "fff",
 
-    "nvim-window",
     "vim-tmux-navigator",
 
     "toggleterm",
 
     "dap",
-
-    "agda",
-    "vim-be-good",
-    "actually-doom",
 }
 
 local modules = {}
