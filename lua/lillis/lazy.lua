@@ -512,6 +512,7 @@ require("lazy").setup({
             },
             {
                 'nvimdev/lspsaga.nvim',
+                dir = '/home/lillis/projects/lspsaga.nvim',
                 opts = {
                     lightbulb = { enable = false }
                 },
