@@ -17,7 +17,6 @@ vim.opt.backup = false
 vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
 vim.opt.undofile = true
 
-
 vim.opt.hlsearch = false
 vim.opt.incsearch = true
 
@@ -31,17 +30,10 @@ vim.opt.updatetime = 50
 
 vim.opt.colorcolumn = "80"
 
--- vim.opt.cmdheight = 0
-
-vim.g.mapleader = " "
-
 vim.opt.ve = { "onemore" }
 
--- Prevent zls from opening quick fix list on save (not needed anymore?)
--- vim.g.zig_fmt_parse_errors = 0 
 -- Prevent zls from formatting on save
 vim.g.zig_fmt_autosave = 0
 vim.api.nvim_set_hl(0, '@lsp.type.string.zig', {})
-vim.env.RUSTFLAGS = "--cfg=clippy" -- Does nothing?
--- Lua way to do this?
+vim.env.RUSTFLAGS = "--cfg=clippy"
 vim.cmd([[highlight NvimWindowHighlights guibg=#A88D29 guifg=#FFFFFF]])

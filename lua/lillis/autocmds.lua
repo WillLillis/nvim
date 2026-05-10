@@ -1,0 +1,63 @@
+-- Terminal stuff
+vim.api.nvim_command("autocmd TermOpen * setlocal nonumber norelativenumber")
+vim.api.nvim_command("autocmd TermOpen * startinsert")
+
+-- Line wrapping for LaTeX and Markdown files
+vim.api.nvim_create_autocmd('BufEnter', {
+    pattern = { '*.md', '*.tex' },
+    command = 'setlocal wrap'
+})
+
+-- Highlight when yanking text
+vim.api.nvim_create_autocmd('TextYankPost', {
+    desc = 'Highlight when yanking text',
+    group = vim.api.nvim_create_augroup('lillis-highlight-yank', { clear = true }),
+    callback = function()
+        vim.highlight.on_yank()
+    end,
+})
+
+-- Start ts_query_ls for tree-sitter query files
+vim.api.nvim_create_autocmd('FileType', {
+    pattern = 'query',
+    callback = function(ev)
+        if vim.bo[ev.buf].buftype == 'nofile' then
+            return
+        end
+        vim.lsp.start {
+            name = 'ts_query_ls',
+            cmd = { '/home/lillis/projects/ts_query_ls/target/debug/ts_query_ls' },
+            root_dir = vim.fs.root(0, { 'queries' }),
+            settings = {
+                parser_install_directories = {
+                    vim.fs.joinpath(
+                        vim.fn.stdpath('data'),
+                        '/lazy/nvim-treesitter/parser/'
+                    ),
+                },
+                parser_aliases = {
+                    ecma = 'javascript',
+                },
+                language_retrieval_patterns = {
+                    'languages/src/([^/]+)/[^/]+\\.scm$',
+                },
+            },
+        }
+    end,
+})
+
+-- Start ts_grammar_ls for grammar_dsl files
+vim.api.nvim_create_autocmd('FileType', {
+    pattern = 'grammar_dsl',
+    callback = function(ev)
+        if vim.bo[ev.buf].buftype == 'nofile' then
+            return
+        end
+        vim.lsp.start {
+            name = 'ts_grammar_ls',
+            cmd = { '/home/lillis/projects/ts_grammar_ls/target/release/ts_grammar_ls' },
+            root_dir = vim.fs.root(0, { 'grammar.tsg' }),
+            settings = {},
+        }
+    end,
+})
