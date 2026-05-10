@@ -1,1 +1,3 @@
-return { "christoomey/vim-tmux-navigator" }
+return {
+    src = "https://github.com/christoomey/vim-tmux-navigator",
+}

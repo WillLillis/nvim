@@ -1,6 +1,5 @@
 return {
-    "theprimeagen/harpoon",
-    lazy = false,
+    src = "https://github.com/theprimeagen/harpoon",
     config = function()
         local mark = require("harpoon.mark")
         local ui = require("harpoon.ui")

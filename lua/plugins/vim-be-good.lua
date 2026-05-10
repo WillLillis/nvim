@@ -1,5 +1,3 @@
 return {
-    "theprimeagen/vim-be-good",
-    lazy = true,
-    cmd = "VimBeGood",
+    src = "https://github.com/theprimeagen/vim-be-good",
 }

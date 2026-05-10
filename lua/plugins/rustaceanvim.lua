@@ -1,7 +1,6 @@
 return {
-    "mrcjkb/rustaceanvim",
-    version = '^5',
-    lazy = false,
+    src = "https://github.com/mrcjkb/rustaceanvim",
+    version = vim.version.range("^5"),
     config = function()
         vim.g.rustaceanvim = {
             tools = {},
@@ -28,5 +27,5 @@ return {
             },
             dap = {},
         }
-    end
+    end,
 }

@@ -1,1 +1,3 @@
-return { "seandewar/actually-doom.nvim" }
+return {
+    src = "https://github.com/seandewar/actually-doom.nvim",
+}

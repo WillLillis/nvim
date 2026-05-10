@@ -1,31 +1,20 @@
 return {
-    'neovim/nvim-lspconfig',
-    dependencies = {
-        'williamboman/mason.nvim',
-        'williamboman/mason-lspconfig.nvim',
-        'WhoIsSethDaniel/mason-tool-installer.nvim',
-        {
-            "folke/lazydev.nvim",
-            ft = "lua",
-            opts = {
-                library = {
-                    { path = "${3rd}/luv/library", words = { "vim%.uv" } },
-                },
-            },
-        },
-        {
-            'nvimdev/lspsaga.nvim',
-            dir = '/home/lillis/projects/lspsaga.nvim',
-            opts = {
-                lightbulb = { enable = false }
-            },
-            dependencies = {
-                'nvim-tree/nvim-web-devicons',
-            }
-        },
-        { 'j-hui/fidget.nvim', opts = {} },
+    src = "https://github.com/neovim/nvim-lspconfig",
+    deps = {
+        "https://github.com/williamboman/mason.nvim",
+        "https://github.com/williamboman/mason-lspconfig.nvim",
+        "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim",
+        "https://github.com/folke/lazydev.nvim",
+        "https://github.com/j-hui/fidget.nvim",
     },
     config = function()
+        require("lazydev").setup({
+            library = {
+                { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+            },
+        })
+        require("fidget").setup({})
+
         vim.api.nvim_create_autocmd('LspAttach', {
             group = vim.api.nvim_create_augroup('lillis-lsp-attach', { clear = true }),
             callback = function(event)

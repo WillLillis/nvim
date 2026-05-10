@@ -1,15 +1,11 @@
 return {
-    "nvim-lualine/lualine.nvim",
-    dependencies = {
-        { "nvim-tree/nvim-web-devicons" },
+    src = "https://github.com/nvim-lualine/lualine.nvim",
+    deps = {
+        "https://github.com/nvim-tree/nvim-web-devicons",
     },
-    lazy = false,
     config = function()
         local msg = ""
-
-        local get_msg = function()
-            return msg
-        end
+        local get_msg = function() return msg end
 
         require('lualine').setup({
             options = { theme = "codedark" },

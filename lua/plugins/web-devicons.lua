@@ -1,8 +1,8 @@
 return {
-    "nvim-tree/nvim-web-devicons",
+    src = "https://github.com/nvim-tree/nvim-web-devicons",
     name = "devicons",
     config = function()
-        require('nvim-web-devicons').setup {
+        require('nvim-web-devicons').setup({
             override = {
                 zsh = {
                     icon = "",
@@ -38,6 +38,6 @@ return {
                     name = "ASM",
                 }
             },
-        }
+        })
     end,
 }

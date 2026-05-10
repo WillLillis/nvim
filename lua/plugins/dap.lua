@@ -1,197 +1,188 @@
 return {
-    {
-        "mfussenegger/nvim-dap",
-        name = "dap",
-        lazy = false,
-        dependencies = {
-            "leoluz/nvim-dap-go",
-            "rcarriga/nvim-dap-ui",
-            "theHamsta/nvim-dap-virtual-text",
-            "nvim-neotest/nvim-nio",
-            "williamboman/mason.nvim",
-        },
-        config = function()
-            local dap, dapui = require("dap"), require("dapui")
+    src = "https://github.com/mfussenegger/nvim-dap",
+    name = "dap",
+    deps = {
+        "https://github.com/leoluz/nvim-dap-go",
+        "https://github.com/rcarriga/nvim-dap-ui",
+        "https://github.com/theHamsta/nvim-dap-virtual-text",
+        "https://github.com/nvim-neotest/nvim-nio",
+    },
+    config = function()
+        local dap, dapui = require("dap"), require("dapui")
 
-            dap.adapters.gdb = {
-                type = 'executable',
-                command = 'gdb',
-                args = { "-i", "dap" }
-            }
+        dap.adapters.gdb = {
+            type = 'executable',
+            command = 'gdb',
+            args = { "-i", "dap" }
+        }
 
-            dap.adapters.lldb_zig = {
-                type = 'executable',
-                -- Use jacobly0's fork
-                -- cmake llvm -G Ninja -B build -DLLVM_ENABLE_PROJECTS="clang;lldb" -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLLVM_ENABLE_ASSERTIONS=ON -DLLDB_ENABLE_LIBEDIT=ON -DLLDB_ENABLE_PYTHON=ON
-                -- cmake --build build --target lldb --target lldb-server --target lldb-dap
-                command = '/home/lillis/projects/lldb-dap',
-                args = {}
-            }
+        dap.adapters.lldb_zig = {
+            type = 'executable',
+            -- Use jacobly0's fork
+            -- cmake llvm -G Ninja -B build -DLLVM_ENABLE_PROJECTS="clang;lldb" -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLLVM_ENABLE_ASSERTIONS=ON -DLLDB_ENABLE_LIBEDIT=ON -DLLDB_ENABLE_PYTHON=ON
+            -- cmake --build build --target lldb --target lldb-server --target lldb-dap
+            command = '/home/lillis/projects/lldb-dap',
+            args = {}
+        }
 
-            dap.adapters.lldb = {
-                type = 'executable',
-                command = 'lldb-dap',
-            }
+        dap.adapters.lldb = {
+            type = 'executable',
+            command = 'lldb-dap',
+        }
 
-            dap.configurations.rust = {
-                {
-                    type = 'lldb',
-                    name = 'Debug',
-                    request = 'launch',
-                    program = function()
-                        return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
-                    end,
-                    cwd = vim.fn.getcwd(),
-                    args = { "test_load_wasm_ruby_language" },
-                    runInTerminal = false,
-                    initCommands = function()
-                        local rustc_sysroot = vim.fn.trim(vim.fn.system 'rustc --print sysroot')
-                        assert(
-                            vim.v.shell_error == 0,
-                            'failed to get rust sysroot using `rustc --print sysroot`: '
-                            .. rustc_sysroot
-                        )
-                        local script_file = rustc_sysroot .. '/lib/rustlib/etc/lldb_lookup.py'
-                        local commands_file = rustc_sysroot .. '/lib/rustlib/etc/lldb_commands'
-
-                        return {
-                            ([[!command script import '%s']]):format(script_file),
-                            ([[command source '%s']]):format(commands_file),
-                        }
-                    end,
-                },
-            }
-
-            -- Make sure you compile with -g
-            dap.configurations.c = {
-                {
-                    name = "Launch",
-                    type = "lldb",
-                    request = "launch",
-                    program = function()
-                        return vim.fn.input('Path to C executable: ', vim.fn.getcwd() .. '/', 'file')
-                    end,
-                    cwd = "${workspaceFolder}",
-                    stopAtBeginningOfMainSubprogram = false,
-                },
-            }
-
-            dap.configurations.cpp = {
-                {
-                    name = "Launch",
-                    type = "lldb",
-                    request = "launch",
-                    program = function()
-                        return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
-                    end,
-                    cwd = "${workspaceFolder}",
-                    stopAtBeginningOfMainSubprogram = false,
-                    initCommands = function()
-                        local lldb_python_path = vim.fn.trim(vim.fn.system 'lldb -P')
-                        assert(
-                            vim.v.shell_error == 0,
-                            'failed to get lldb ptyhong path using `lldb -P`: '
-                            .. lldb_python_path
-                        )
-                        local init_file = lldb_python_path .. '/lldb/formatters/cpp/__init__.py'
-                        return {
-                            ([[!command script import '%s']]):format(init_file),
-                        }
-                    end
-                },
-            }
-
-            dap.configurations.zig = {
-                {
-                    name = 'Launch',
-                    type = 'lldb_zig',
-                    request = 'launch',
-                    program = function()
-                        return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
-                    end,
-                    cwd = '${workspaceFolder}',
-                    stopAtBeginningOfMainSubprogram = false,
-                    initCommands = function()
-                        return {
-                            [[command script import /home/lillis/projects/zig/tools/lldb_pretty_printers.py]],
-                        }
-                    end,
-                },
-            }
-
-            vim.keymap.set('n', '<F5>', function() dap.continue() end)
-            vim.keymap.set('n', '<F6>', function() dap.step_into() end)
-            vim.keymap.set('n', '<F7>', function() dap.step_over() end)
-            vim.keymap.set('n', '<F8>', function() dap.step_out() end)
-            vim.keymap.set('n', '<Leader>b', function() dap.toggle_breakpoint() end, { desc = "[b] toggle Breakpoint" })
-            vim.keymap.set('n', '<Leader>B', function() dap.set_breakpoint() end, { desc = "[B] set Breakpoint" })
-            vim.keymap.set('n', '<Leader>lp',
-                function() dap.set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end,
-                { desc = "[lp] Log Point message" })
-            vim.keymap.set('n', '<Leader>dr', function() dap.repl.open() end, { desc = "[dr] open REPL" })
-            vim.keymap.set('n', '<Leader>dl', function() dap.run_last() end, { desc = "[dl] run Last" })
-            vim.keymap.set({ 'n', 'v' }, '<Leader>dh', function()
-                require('dap.ui.widgets').hover()
-            end)
-            vim.keymap.set({ 'n', 'v' }, '<Leader>dp', function()
-                require('dap.ui.widgets').preview()
-            end)
-            vim.keymap.set('n', '<Leader>df', function()
-                local widgets = require('dap.ui.widgets')
-                widgets.centered_float(widgets.frames)
-            end)
-            vim.keymap.set('n', '<Leader>ds', function()
-                local widgets = require('dap.ui.widgets')
-                widgets.centered_float(widgets.scopes)
-            end)
-            vim.keymap.set('n', '<Leader>?', function()
-                require('dapui').eval(nil, { enter = true, context = "hover" })
-            end)
-            vim.keymap.set('n', '<Leader><Leader>?', function()
-                require('dapui').eval('*' .. require('dapui.util').get_current_expr(),
-                    { enter = true, context = "hover" })
-            end)
-            vim.keymap.set('n', '<Leader>aw', function()
-                require('dapui').elements.watches.add(vim.fn.expand('<cword>'))
-            end, { desc = "[aw] Add Watch under cursor" })
-            vim.keymap.set('n', '<Leader>ca', function()
-                dapui.close()
-            end, { desc = "[ca] Close All dapui windows" })
-
-            dap.listeners.after.event_initialized["dapui_config"] = function()
-                dapui.open()
-            end
-            dap.listeners.before.event_terminated["dapui_config"] = function()
-                dapui.close()
-            end
-            dap.listeners.before.event_exited["dapui_config"] = function()
-                dapui.close()
-            end
-
-            require("dapui").setup()
-            require("nvim-dap-virtual-text").setup({
-                enabled = true,
-                highlight_changed_variables = true,
-                highlight_new_as_changed = false,
-                show_stop_reason = true,
-                commented = false,
-                only_first_definition = true,
-                all_references = false,
-                all_frames = true,
-                virt_text_pos = 'inline',
-                display_callback = function(variable, buf, stackframe, node, options)
-                    if options.virt_text_pos == 'inline' then
-                        return ' = ' .. variable.value
-                    else
-                        return variable.name .. ' = ' .. variable.value
-                    end
+        dap.configurations.rust = {
+            {
+                type = 'lldb',
+                name = 'Debug',
+                request = 'launch',
+                program = function()
+                    return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
                 end,
-            })
-        end,
-    },
-    {
-        "rcarriga/nvim-dap-ui",
-        lazy = true,
-        dependencies = { "nvim-neotest/nvim-nio" }
-    },
+                cwd = vim.fn.getcwd(),
+                args = { "test_load_wasm_ruby_language" },
+                runInTerminal = false,
+                initCommands = function()
+                    local rustc_sysroot = vim.fn.trim(vim.fn.system 'rustc --print sysroot')
+                    assert(
+                        vim.v.shell_error == 0,
+                        'failed to get rust sysroot using `rustc --print sysroot`: '
+                        .. rustc_sysroot
+                    )
+                    local script_file = rustc_sysroot .. '/lib/rustlib/etc/lldb_lookup.py'
+                    local commands_file = rustc_sysroot .. '/lib/rustlib/etc/lldb_commands'
+
+                    return {
+                        ([[!command script import '%s']]):format(script_file),
+                        ([[command source '%s']]):format(commands_file),
+                    }
+                end,
+            },
+        }
+
+        -- Make sure you compile with -g
+        dap.configurations.c = {
+            {
+                name = "Launch",
+                type = "lldb",
+                request = "launch",
+                program = function()
+                    return vim.fn.input('Path to C executable: ', vim.fn.getcwd() .. '/', 'file')
+                end,
+                cwd = "${workspaceFolder}",
+                stopAtBeginningOfMainSubprogram = false,
+            },
+        }
+
+        dap.configurations.cpp = {
+            {
+                name = "Launch",
+                type = "lldb",
+                request = "launch",
+                program = function()
+                    return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+                end,
+                cwd = "${workspaceFolder}",
+                stopAtBeginningOfMainSubprogram = false,
+                initCommands = function()
+                    local lldb_python_path = vim.fn.trim(vim.fn.system 'lldb -P')
+                    assert(
+                        vim.v.shell_error == 0,
+                        'failed to get lldb ptyhong path using `lldb -P`: '
+                        .. lldb_python_path
+                    )
+                    local init_file = lldb_python_path .. '/lldb/formatters/cpp/__init__.py'
+                    return {
+                        ([[!command script import '%s']]):format(init_file),
+                    }
+                end
+            },
+        }
+
+        dap.configurations.zig = {
+            {
+                name = 'Launch',
+                type = 'lldb_zig',
+                request = 'launch',
+                program = function()
+                    return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+                end,
+                cwd = '${workspaceFolder}',
+                stopAtBeginningOfMainSubprogram = false,
+                initCommands = function()
+                    return {
+                        [[command script import /home/lillis/projects/zig/tools/lldb_pretty_printers.py]],
+                    }
+                end,
+            },
+        }
+
+        vim.keymap.set('n', '<F5>', function() dap.continue() end)
+        vim.keymap.set('n', '<F6>', function() dap.step_into() end)
+        vim.keymap.set('n', '<F7>', function() dap.step_over() end)
+        vim.keymap.set('n', '<F8>', function() dap.step_out() end)
+        vim.keymap.set('n', '<Leader>b', function() dap.toggle_breakpoint() end, { desc = "[b] toggle Breakpoint" })
+        vim.keymap.set('n', '<Leader>B', function() dap.set_breakpoint() end, { desc = "[B] set Breakpoint" })
+        vim.keymap.set('n', '<Leader>lp',
+            function() dap.set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end,
+            { desc = "[lp] Log Point message" })
+        vim.keymap.set('n', '<Leader>dr', function() dap.repl.open() end, { desc = "[dr] open REPL" })
+        vim.keymap.set('n', '<Leader>dl', function() dap.run_last() end, { desc = "[dl] run Last" })
+        vim.keymap.set({ 'n', 'v' }, '<Leader>dh', function()
+            require('dap.ui.widgets').hover()
+        end)
+        vim.keymap.set({ 'n', 'v' }, '<Leader>dp', function()
+            require('dap.ui.widgets').preview()
+        end)
+        vim.keymap.set('n', '<Leader>df', function()
+            local widgets = require('dap.ui.widgets')
+            widgets.centered_float(widgets.frames)
+        end)
+        vim.keymap.set('n', '<Leader>ds', function()
+            local widgets = require('dap.ui.widgets')
+            widgets.centered_float(widgets.scopes)
+        end)
+        vim.keymap.set('n', '<Leader>?', function()
+            require('dapui').eval(nil, { enter = true, context = "hover" })
+        end)
+        vim.keymap.set('n', '<Leader><Leader>?', function()
+            require('dapui').eval('*' .. require('dapui.util').get_current_expr(),
+                { enter = true, context = "hover" })
+        end)
+        vim.keymap.set('n', '<Leader>aw', function()
+            require('dapui').elements.watches.add(vim.fn.expand('<cword>'))
+        end, { desc = "[aw] Add Watch under cursor" })
+        vim.keymap.set('n', '<Leader>ca', function()
+            dapui.close()
+        end, { desc = "[ca] Close All dapui windows" })
+
+        dap.listeners.after.event_initialized["dapui_config"] = function()
+            dapui.open()
+        end
+        dap.listeners.before.event_terminated["dapui_config"] = function()
+            dapui.close()
+        end
+        dap.listeners.before.event_exited["dapui_config"] = function()
+            dapui.close()
+        end
+
+        require("dapui").setup()
+        require("nvim-dap-virtual-text").setup({
+            enabled = true,
+            highlight_changed_variables = true,
+            highlight_new_as_changed = false,
+            show_stop_reason = true,
+            commented = false,
+            only_first_definition = true,
+            all_references = false,
+            all_frames = true,
+            virt_text_pos = 'inline',
+            display_callback = function(variable, buf, stackframe, node, options)
+                if options.virt_text_pos == 'inline' then
+                    return ' = ' .. variable.value
+                else
+                    return variable.name .. ' = ' .. variable.value
+                end
+            end,
+        })
+    end,
 }

@@ -1,6 +1,6 @@
 return {
-    "numToStr/Comment.nvim",
+    src = "https://github.com/numToStr/Comment.nvim",
     config = function()
         require("Comment").setup()
-    end
+    end,
 }

@@ -1,6 +1,5 @@
 return {
-    "WillLillis/lsploghover.nvim",
-    lazy = false,
+    src = "https://github.com/WillLillis/lsploghover.nvim",
     config = function()
         local log = require("lsploghover")
         vim.keymap.set('n', '<leader>st', function() log.start() end, { desc = "[st] STart log time stamp" })

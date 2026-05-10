@@ -1,7 +1,6 @@
 return {
-    "folke/snacks.nvim",
-    priority = 1000,
-    lazy = false,
-    ---@type snacks.Config
-    opts = {},
+    src = "https://github.com/folke/snacks.nvim",
+    config = function()
+        require("snacks").setup({})
+    end,
 }

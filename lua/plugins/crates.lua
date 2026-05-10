@@ -1,8 +1,8 @@
 return {
-    'saecki/crates.nvim',
-    tag = 'stable',
+    src = "https://github.com/saecki/crates.nvim",
+    version = "stable",
     config = function()
-        require('crates').setup {
+        require('crates').setup({
             completion = {
                 cmp = {
                     enabled = true,
@@ -19,6 +19,6 @@ return {
                 completion = true,
                 hover = true,
             }
-        }
-    end
+        })
+    end,
 }

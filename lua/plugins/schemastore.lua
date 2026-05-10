@@ -1,4 +1,3 @@
 return {
-    "b0o/schemastore.nvim",
-    lazy = true,
+    src = "https://github.com/b0o/schemastore.nvim",
 }

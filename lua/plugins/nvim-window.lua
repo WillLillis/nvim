@@ -1,9 +1,5 @@
 return {
-    "yorickpeterse/nvim-window",
-    keys = {
-        { "<leader>w", "<cmd>lua require('nvim-window').pick()<CR>", desc = "nvim-window: Jump to window" },
-    },
-    lazy = false,
+    src = "https://github.com/yorickpeterse/nvim-window",
     config = function()
         require('nvim-window').setup({
             chars = {
@@ -15,5 +11,8 @@ return {
             border = 'rounded',
             render = 'float',
         })
+
+        vim.keymap.set("n", "<leader>w", "<cmd>lua require('nvim-window').pick()<CR>",
+            { desc = "nvim-window: Jump to window" })
     end,
 }

@@ -1,34 +1,20 @@
 return {
-    'hrsh7th/nvim-cmp',
-    event = 'InsertEnter',
-    dependencies = {
-        {
-            'L3MON4D3/LuaSnip',
-            build = (function()
-                if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
-                    return
-                end
-                return 'make install_jsregexp'
-            end)(),
-            dependencies = {
-                {
-                    'rafamadriz/friendly-snippets',
-                    config = function()
-                        require('luasnip.loaders.from_vscode').lazy_load()
-                    end,
-                },
-            },
-        },
-        'saadparwaiz1/cmp_luasnip',
-        'hrsh7th/cmp-nvim-lsp',
-        'hrsh7th/cmp-path',
+    src = "https://github.com/hrsh7th/nvim-cmp",
+    deps = {
+        "https://github.com/L3MON4D3/LuaSnip",
+        "https://github.com/rafamadriz/friendly-snippets",
+        "https://github.com/saadparwaiz1/cmp_luasnip",
+        "https://github.com/hrsh7th/cmp-nvim-lsp",
+        "https://github.com/hrsh7th/cmp-path",
     },
     config = function()
-        local cmp = require 'cmp'
-        local luasnip = require 'luasnip'
+        local cmp = require('cmp')
+        local luasnip = require('luasnip')
         local types = require("luasnip.util.types")
 
-        luasnip.config.set_config {
+        require('luasnip.loaders.from_vscode').lazy_load()
+
+        luasnip.config.set_config({
             history = true,
             updateevents = "TextChanged,TextChangedI",
             enable_autosnippets = true,
@@ -39,7 +25,7 @@ return {
                     },
                 },
             },
-        }
+        })
 
         vim.keymap.set({ "i" }, "<C-K>", function() luasnip.expand() end, { silent = true })
         vim.keymap.set({ "i", "s" }, "<C-L>", function() luasnip.jump(1) end, { silent = true })
@@ -73,7 +59,7 @@ return {
         local SPACE_ELLIPSIS = ' …'
         local MAX_LABEL_WIDTH = 30
 
-        cmp.setup {
+        cmp.setup({
             snippet = {
                 expand = function(args)
                     luasnip.lsp_expand(args.body)
@@ -87,13 +73,13 @@ return {
                     return vim_item
                 end,
             },
-            mapping = cmp.mapping.preset.insert {
+            mapping = cmp.mapping.preset.insert({
                 ['<C-n>'] = cmp.mapping.select_next_item(),
                 ['<C-p>'] = cmp.mapping.select_prev_item(),
                 ['<C-b>'] = cmp.mapping.scroll_docs(-4),
                 ['<C-f>'] = cmp.mapping.scroll_docs(4),
-                ['<C-y>'] = cmp.mapping.confirm { select = true },
-                ['<C-Space>'] = cmp.mapping.complete {},
+                ['<C-y>'] = cmp.mapping.confirm({ select = true }),
+                ['<C-Space>'] = cmp.mapping.complete({}),
                 ['<C-l>'] = cmp.mapping(function()
                     if luasnip.expand_or_locally_jumpable() then
                         luasnip.expand_or_jump()
@@ -104,13 +90,13 @@ return {
                         luasnip.jump(-1)
                     end
                 end, { 'i', 's' }),
-            },
+            }),
             sources = {
                 { name = 'nvim_lsp' },
                 { name = 'luasnip' },
                 { name = 'path' },
                 { name = 'crates' },
             },
-        }
+        })
     end,
 }
