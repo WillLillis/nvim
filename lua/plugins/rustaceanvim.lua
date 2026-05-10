@@ -19,6 +19,7 @@ return {
                             features = "all",
                         },
                         check = {
+                            command = "clippy",
                             targetDir = true,
                             features = "all",
                         },

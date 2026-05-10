@@ -35,7 +35,6 @@ vim.opt.ve = { "onemore" }
 -- Prevent zls from formatting on save
 vim.g.zig_fmt_autosave = 0
 vim.api.nvim_set_hl(0, '@lsp.type.string.zig', {})
-vim.env.RUSTFLAGS = "--cfg=clippy"
 
 -- Statusline lives in its own module (`lua/lillis/statusline.lua`) and
 -- is required from init.lua.
