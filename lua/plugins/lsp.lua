@@ -1,9 +1,9 @@
+-- LSP orchestration. No nvim-lspconfig, no mason - servers are installed
+-- via the system package manager (paru / cargo / local builds) and
+-- configured directly via the builtin vim.lsp.config / vim.lsp.enable APIs
+-- (Neovim 0.11+).
 return {
-    src = "https://github.com/neovim/nvim-lspconfig",
     deps = {
-        "https://github.com/williamboman/mason.nvim",
-        "https://github.com/williamboman/mason-lspconfig.nvim",
-        "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim",
         "https://github.com/folke/lazydev.nvim",
         "https://github.com/j-hui/fidget.nvim",
     },
@@ -15,6 +15,7 @@ return {
         })
         require("fidget").setup({})
 
+        -- Buffer-local keymaps and autocmds set up when any LSP attaches.
         vim.api.nvim_create_autocmd('LspAttach', {
             group = vim.api.nvim_create_augroup('lillis-lsp-attach', { clear = true }),
             callback = function(event)
@@ -69,38 +70,123 @@ return {
             end,
         })
 
-        local capabilities = vim.lsp.protocol.make_client_capabilities()
-        capabilities.workspace = capabilities.workspace or {}
-        capabilities.workspace.didChangeWatchedFiles = {
-            dynamicRegistration = true,
-        }
-        capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
-
-        local servers = {
-            clangd = {},
-        }
-
-        require('mason').setup()
-
+        -- Lspsaga rename buffer: ESC closes
         vim.api.nvim_create_autocmd("FileType", {
             pattern = "sagarename",
             command = "nnoremap <buffer><silent> <ESC> <cmd>close!<CR>",
         })
 
-        local ensure_installed = vim.tbl_keys(servers or {})
-        vim.list_extend(ensure_installed, {
-            'stylua',
-        })
-        require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+        -- Register .tsg files as grammar_dsl filetype (used by ts_grammar_ls)
+        vim.filetype.add({ extension = { tsg = "grammar_dsl" } })
 
-        require('mason-lspconfig').setup {
-            handlers = {
-                function(server_name)
-                    local server = servers[server_name] or {}
-                    server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-                    require('lspconfig')[server_name].setup(server)
-                end,
+        -- Default capabilities for all servers - cmp adds completion-related
+        -- extras on top of the protocol baseline.
+        local capabilities = vim.lsp.protocol.make_client_capabilities()
+        capabilities.workspace = capabilities.workspace or {}
+        capabilities.workspace.didChangeWatchedFiles = { dynamicRegistration = true }
+        capabilities = vim.tbl_deep_extend('force', capabilities,
+            require('cmp_nvim_lsp').default_capabilities())
+        vim.lsp.config('*', { capabilities = capabilities })
+
+        -- Per-server configurations.
+        vim.lsp.config('clangd', {
+            cmd = { 'clangd' },
+            filetypes = { 'c', 'cpp', 'objc', 'objcpp', 'cuda' },
+            root_markers = { '.clangd', 'compile_commands.json', 'compile_flags.txt', '.git' },
+        })
+
+        vim.lsp.config('lua_ls', {
+            cmd = { 'lua-language-server' },
+            filetypes = { 'lua' },
+            root_markers = {
+                '.luarc.json', '.luarc.jsonc', '.luacheckrc',
+                '.stylua.toml', 'stylua.toml', 'selene.toml', 'selene.yml', '.git',
             },
-        }
+        })
+
+        vim.lsp.config('zls', {
+            cmd = { '/home/lillis/projects/zls/zig-out/bin/zls' },
+            filetypes = { 'zig', 'zir' },
+            root_markers = { 'zls.json', 'build.zig', '.git' },
+        })
+
+        vim.lsp.config('bashls', {
+            cmd = { 'bash-language-server', 'start' },
+            filetypes = { 'bash', 'sh' },
+            root_markers = { '.git' },
+        })
+
+        vim.lsp.config('jsonls', {
+            cmd = { 'vscode-json-languageserver', '--stdio' },
+            filetypes = { 'json', 'jsonc' },
+            root_markers = { '.git' },
+        })
+
+        vim.lsp.config('taplo', {
+            cmd = { 'taplo', 'lsp', 'stdio' },
+            filetypes = { 'toml' },
+            root_markers = { '.taplo.toml', 'taplo.toml', '.git' },
+        })
+
+        vim.lsp.config('ts_ls', {
+            cmd = { 'typescript-language-server', '--stdio' },
+            filetypes = {
+                'javascript', 'javascriptreact', 'javascript.jsx',
+                'typescript', 'typescriptreact', 'typescript.tsx',
+            },
+            root_markers = { 'tsconfig.json', 'jsconfig.json', 'package.json', '.git' },
+        })
+
+        vim.lsp.config('neocmake', {
+            cmd = { 'neocmakelsp', '--stdio' },
+            filetypes = { 'cmake' },
+            root_markers = { '.git' },
+        })
+
+        vim.lsp.config('asm_lsp', {
+            cmd = { '/home/lillis/projects/asm-lsp/target/release/asm-lsp' },
+            filetypes = { 'asm' },
+            root_markers = { '.asm-lsp.toml', '.git' },
+        })
+
+        vim.lsp.config('ts_query_ls', {
+            cmd = { '/home/lillis/projects/ts_query_ls/target/debug/ts_query_ls' },
+            filetypes = { 'query' },
+            root_markers = { 'queries' },
+            settings = {
+                parser_install_directories = {
+                    vim.fs.joinpath(
+                        vim.fn.stdpath('data'),
+                        '/site/pack/core/opt/nvim-treesitter/parser/'
+                    ),
+                },
+                parser_aliases = {
+                    ecma = 'javascript',
+                },
+                language_retrieval_patterns = {
+                    'languages/src/([^/]+)/[^/]+\\.scm$',
+                },
+            },
+        })
+
+        vim.lsp.config('ts_grammar_ls', {
+            cmd = { '/home/lillis/projects/ts_grammar_ls/target/release/ts_grammar_ls' },
+            filetypes = { 'grammar_dsl' },
+            root_markers = { 'grammar.tsg' },
+        })
+
+        vim.lsp.enable({
+            'clangd',
+            'lua_ls',
+            'zls',
+            'bashls',
+            'jsonls',
+            'taplo',
+            'ts_ls',
+            'neocmake',
+            'asm_lsp',
+            'ts_query_ls',
+            'ts_grammar_ls',
+        })
     end,
 }

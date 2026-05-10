@@ -54,7 +54,11 @@ local manifest = {
 
     "lualine",
     "noice",
-    "wilder",
+    -- wilder: disabled. The popupmenu renderer breaks on nvim 0.13's
+    -- internal API (errors flood the screen on cmdline completion). User
+    -- wanted to replace it anyway (Python install hassle). Replacement
+    -- candidate: noice's cmdline UI is already loaded.
+    -- "wilder",
     "snacks",
     "which-key",
 
@@ -63,7 +67,13 @@ local manifest = {
     "harpoon",
     "undotree",
     "gitsigns",
-    "fff",
+    -- fff: disabled. Rebuilding the Rust binary fails because zlob 1.3.3
+    -- requires zig APIs (std.Options.signal_stack_size, std.Io.Threaded)
+    -- that aren't in zig 0.15.2 stable, and the prebuilt fff release was
+    -- compiled against nvim 0.12 LuaJIT ABI so it segfaults on 0.13.
+    -- Re-enable when fff publishes a 0.13-compatible release or zlob
+    -- catches up to a stable zig.
+    -- "fff",
 
     "nvim-window",
     "vim-tmux-navigator",
