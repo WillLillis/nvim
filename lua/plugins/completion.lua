@@ -1,18 +1,17 @@
 return {
-    src = "https://github.com/hrsh7th/nvim-cmp",
+    src = "https://github.com/saghen/blink.cmp",
+    -- Pin to a tagged release; blink auto-downloads the prebuilt fuzzy
+    -- library matching the tag, so no Rust toolchain is required at runtime.
+    version = "v1.10.2",
     deps = {
         "https://github.com/L3MON4D3/LuaSnip",
         "https://github.com/rafamadriz/friendly-snippets",
-        "https://github.com/saadparwaiz1/cmp_luasnip",
-        "https://github.com/hrsh7th/cmp-nvim-lsp",
-        "https://github.com/hrsh7th/cmp-path",
     },
     config = function()
-        local cmp = require('cmp')
-        local luasnip = require('luasnip')
+        local luasnip = require("luasnip")
         local types = require("luasnip.util.types")
 
-        require('luasnip.loaders.from_vscode').lazy_load()
+        require("luasnip.loaders.from_vscode").lazy_load()
 
         luasnip.config.set_config({
             history = true,
@@ -20,83 +19,95 @@ return {
             enable_autosnippets = true,
             ext_ops = {
                 [types.choiceNode] = {
-                    active = {
-                        virt_text = { { "<-", "Error" } },
-                    },
+                    active = { virt_text = { { "<-", "Error" } } },
                 },
             },
         })
 
-        vim.keymap.set({ "i" }, "<C-K>", function() luasnip.expand() end, { silent = true })
-        vim.keymap.set({ "i", "s" }, "<C-L>", function() luasnip.jump(1) end, { silent = true })
-        vim.keymap.set({ "i", "s" }, "<C-J>", function() luasnip.jump(-1) end, { silent = true })
-
-        local snippet = luasnip.s
+        -- User-defined snippets
+        local s = luasnip.s
         local i = luasnip.insert_node
         local fmt = require("luasnip.extras.fmt").fmt
 
         luasnip.add_snippets("xml", {
-            snippet("<d",
-                fmt(
-                    "<directive name=\"{}\" tool=\"fasm\">\n\t<description>{}</description>\n</directive>",
-                    {
-                        i(1, "Name"),
-                        i(2, ""),
-                    })
-            ),
+            s("<d", fmt(
+                "<directive name=\"{}\" tool=\"fasm\">\n\t<description>{}</description>\n</directive>",
+                { i(1, "Name"), i(2, "") }
+            )),
         })
-
         luasnip.add_snippets("all", {
-            snippet("lsp",
-                fmt(
-                    "LSPLOGHOVER<{}>",
-                    {
-                        i(1, "Log"),
-                    })
-            ),
+            s("lsp", fmt("LSPLOGHOVER<{}>", { i(1, "Log") })),
         })
 
-        local SPACE_ELLIPSIS = ' …'
-        local MAX_LABEL_WIDTH = 30
+        require("blink.cmp").setup({
+            -- Keymaps preserve the muscle memory from the old nvim-cmp setup.
+            keymap = {
+                preset = "none",
+                ["<C-n>"] = { "select_next", "fallback" },
+                ["<C-p>"] = { "select_prev", "fallback" },
+                ["<C-b>"] = { "scroll_documentation_up", "fallback" },
+                ["<C-f>"] = { "scroll_documentation_down", "fallback" },
+                ["<C-y>"] = { "select_and_accept", "fallback" },
+                ["<C-Space>"] = { "show", "show_documentation", "hide_documentation" },
+                ["<C-e>"] = { "hide", "fallback" },
+                -- LuaSnip jumps (matches old config)
+                ["<C-l>"] = {
+                    function()
+                        if luasnip.expand_or_locally_jumpable() then
+                            luasnip.expand_or_jump()
+                            return true
+                        end
+                    end,
+                    "fallback",
+                },
+                ["<C-k>"] = {
+                    function()
+                        if luasnip.locally_jumpable(-1) then
+                            luasnip.jump(-1)
+                            return true
+                        end
+                    end,
+                    "fallback",
+                },
+            },
 
-        cmp.setup({
-            snippet = {
-                expand = function(args)
-                    luasnip.lsp_expand(args.body)
-                end,
-            },
-            completion = { completeopt = 'menu,menuone,noinsert' },
-            formatting = {
-                format = function(entry, vim_item)
-                    local m = vim_item.menu or ""
-                    vim_item.menu = string.sub(m, 1, MAX_LABEL_WIDTH) .. SPACE_ELLIPSIS
-                    return vim_item
-                end,
-            },
-            mapping = cmp.mapping.preset.insert({
-                ['<C-n>'] = cmp.mapping.select_next_item(),
-                ['<C-p>'] = cmp.mapping.select_prev_item(),
-                ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-                ['<C-f>'] = cmp.mapping.scroll_docs(4),
-                ['<C-y>'] = cmp.mapping.confirm({ select = true }),
-                ['<C-Space>'] = cmp.mapping.complete({}),
-                ['<C-l>'] = cmp.mapping(function()
-                    if luasnip.expand_or_locally_jumpable() then
-                        luasnip.expand_or_jump()
-                    end
-                end, { 'i', 's' }),
-                ['<C-k>'] = cmp.mapping(function()
-                    if luasnip.locally_jumpable(-1) then
-                        luasnip.jump(-1)
-                    end
-                end, { 'i', 's' }),
-            }),
+            appearance = { nerd_font_variant = "mono" },
+
+            snippets = { preset = "luasnip" },
+
             sources = {
-                { name = 'nvim_lsp' },
-                { name = 'luasnip' },
-                { name = 'path' },
-                { name = 'crates' },
+                default = { "lsp", "snippets", "path", "buffer" },
+                per_filetype = {
+                    -- crates.nvim integration is wired through its own
+                    -- blink source registration; see plugins/crates.lua.
+                    toml = { "lsp", "crates", "path", "snippets", "buffer" },
+                },
             },
+
+            completion = {
+                accept = { auto_brackets = { enabled = false } },
+                documentation = { auto_show = true, auto_show_delay_ms = 200 },
+                menu = {
+                    border = "rounded",
+                    draw = {
+                        treesitter = { "lsp" },
+                    },
+                },
+            },
+
+            signature = { enabled = true },
+
+            -- Cmdline completion replaces the old wilder.nvim setup.
+            cmdline = {
+                enabled = true,
+                keymap = { preset = "inherit" },
+                completion = {
+                    menu = { auto_show = true },
+                    list = { selection = { preselect = false } },
+                },
+            },
+
+            fuzzy = { implementation = "prefer_rust_with_warning" },
         })
     end,
 }
