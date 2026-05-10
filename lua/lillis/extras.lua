@@ -46,3 +46,18 @@ vim.api.nvim_create_autocmd('FileType', {
     }
   end,
 })
+
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'grammar_dsl',
+  callback = function(ev)
+    if vim.bo[ev.buf].buftype == 'nofile' then
+      return
+    end
+    vim.lsp.start {
+      name = 'ts_grammar_ls',
+      cmd = { '/home/lillis/projects/ts_grammar_ls/target/release/ts_grammar_ls' },
+      root_dir = vim.fs.root(0, { 'grammar.tsg' }),
+      settings = {},
+    }
+  end,
+})
