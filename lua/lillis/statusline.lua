@@ -102,6 +102,17 @@ function _G.lillis_pct()
     return string.format(' %2d%% ', math.floor(cur / total * 100))
 end
 
+-- ─── File path (normalized: cwd-relative, else ~/-shortened, else absolute) ──
+-- vim's `%f` shows the path as it was typed (relative or absolute depending
+-- on how the buffer was opened), which is inconsistent across telescope vs
+-- manual `:e`. `:~:.` makes it relative to cwd when possible, then strips
+-- $HOME to `~` if applicable.
+function _G.lillis_file()
+    local name = vim.api.nvim_buf_get_name(0)
+    if name == "" then return "[No Name]" end
+    return vim.fn.fnamemodify(name, ":~:.")
+end
+
 -- ─── Filetype with icon (web-devicons) ───────────────────────────────────
 -- web-devicons returns a highlight group with the icon's fg color but
 -- its own bg (transparent/default), which produces a visible bg seam
@@ -142,7 +153,7 @@ vim.opt.statusline = table.concat({
     '%#StatuslineSection#',
     '%{v:lua.lillis_branch()}',
     '%{%v:lua.lillis_diff()%} ',
-    ' %f %m %r ',
+    ' %{v:lua.lillis_file()} %m %r ',
     '%{%v:lua.lillis_diag()%}',
     '%#StatuslineSection#',
     '%=',
