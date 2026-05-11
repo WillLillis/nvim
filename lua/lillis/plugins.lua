@@ -21,12 +21,14 @@ vim.api.nvim_create_autocmd("PackChanged", {
                 pcall(vim.cmd, "TSUpdate")
             end)
         elseif name == "fff.nvim" then
-            -- Plugin's own download helper: tries a prebuilt binary first,
-            -- falls back to `cargo build --release`. We need to packadd the
-            -- plugin first since the download module isn't on the runtime
-            -- path yet at install-event time.
-            if not ev.data.active then vim.cmd.packadd("fff.nvim") end
-            require("fff.download").download_or_build_binary()
+            vim.system(
+                { "cargo", "build", "--release" },
+                {
+                    cwd = path,
+                    -- zlob (transitive dep) needs zig 0.16
+                    env = { ZIG = vim.fn.expand("~/zig-x86_64-linux-0.16.0/zig") },
+                }
+            ):wait()
         end
     end,
 })
@@ -59,13 +61,8 @@ local manifest = {
     "harpoon",
     "undotree",
     "gitsigns",
-    -- fff: disabled. Rebuilding the Rust binary fails because zlob 1.3.3
-    -- requires zig APIs (std.Options.signal_stack_size, std.Io.Threaded)
-    -- that aren't in zig 0.15.2 stable, and the prebuilt fff release was
-    -- compiled against nvim 0.12 LuaJIT ABI so it segfaults on 0.13.
-    -- Re-enable when fff publishes a 0.13-compatible release or zlob
-    -- catches up to a stable zig.
-    -- "fff",
+    -- NOTE: Requires zig 0.16.0
+    "fff",
 
     "vim-tmux-navigator",
 
