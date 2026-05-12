@@ -18,7 +18,7 @@ vim.api.nvim_create_autocmd("PackChanged", {
         elseif name == "nvim-treesitter" then
             vim.schedule(function()
                 if not ev.data.active then vim.cmd.packadd("nvim-treesitter") end
-                pcall(vim.cmd, "TSUpdate")
+                pcall(function() vim.cmd("TSUpdate") end)
             end)
         elseif name == "fff.nvim" then
             vim.system(
