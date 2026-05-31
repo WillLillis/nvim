@@ -1,7 +1,3 @@
--- LSP orchestration. No nvim-lspconfig, no mason - servers are installed
--- via the system package manager (paru / cargo / local builds) and
--- configured directly via the builtin vim.lsp.config / vim.lsp.enable APIs
--- (Neovim 0.11+).
 return {
     deps = {
         "https://github.com/folke/lazydev.nvim",
@@ -55,6 +51,7 @@ return {
                     { desc = "<C-h> signature Help" })
                 vim.keymap.set("n", "<leader>fr", function() vim.lsp.buf.format() end,
                     { desc = "[fr] Format" })
+                vim.keymap.set("n", "<leader>cl", function() vim.lsp.codelens.run() end)
 
                 local client = vim.lsp.get_client_by_id(event.data.client_id)
                 if client and client.server_capabilities.documentHighlightProvider then
@@ -78,6 +75,13 @@ return {
 
         -- Register .tsg files as grammar_dsl filetype (used by ts_grammar_ls)
         vim.filetype.add({ extension = { tsg = "grammar_dsl" } })
+        -- tsg repl codelens
+        vim.api.nvim_create_autocmd("FileType", {
+            pattern = "grammar_dsl",
+            callback = function(args)
+                vim.lsp.codelens.enable(true, { bufnr = args.buf })
+            end,
+        })
 
         -- Default capabilities for all servers - cmp adds completion-related
         -- extras on top of the protocol baseline.
