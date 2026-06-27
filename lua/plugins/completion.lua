@@ -78,9 +78,11 @@ return {
             sources = {
                 default = { "lsp", "snippets", "path", "buffer" },
                 per_filetype = {
-                    -- crates.nvim integration is wired through its own
-                    -- blink source registration; see plugins/crates.lua.
-                    toml = { "lsp", "crates", "path", "snippets", "buffer" },
+                    -- crates.nvim serves completions through its in-process LSP
+                    -- (lsp.completion = true in plugins/crates.lua), so crate
+                    -- completions arrive via blink's built-in "lsp" source. There
+                    -- is no separate "crates" provider to register.
+                    toml = { "lsp", "path", "snippets", "buffer" },
                 },
             },
 

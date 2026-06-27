@@ -17,6 +17,7 @@ return {
                             targetDir = true,
                             buildScripts = { enable = true },
                             features = "all",
+                            cfgs = { "debug_assertions", "trace_events" },
                         },
                         check = {
                             command = "clippy",
